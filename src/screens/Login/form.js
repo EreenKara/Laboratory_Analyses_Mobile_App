@@ -1,25 +1,21 @@
-import { View, Text } from "react-native";
+import { View, Text, Button } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
-import { useTranslation } from "react-i18next";
-import { mylocalizer } from "../../preparations/localizer";
-
-let i18n = mylocalizer(
-   "../../../locales/Login/tr.json",
-   "../../../locales/Login/en.json"
-);
-
-const FormComponent = ({ pStyle }) => {
-   const { t, i18n } = useTranslation();
-
-   const changeLanguage = (lang) => {
-      i18n.changeLanguage(lang); // Dili değiştir
-   };
+const FormComponent = () => {
+   const navigation = useNavigation();
    return (
-      <View style={pStyle}>
+      <View>
          <Text>Form Component</Text>
-         <Button title="Türkçe" onPress={() => changeLanguage("tr")} />
-         <Button title="English" onPress={() => changeLanguage("en")} />
+         <Button
+            title="Tikla"
+            onPress={() =>
+               navigation.reset({
+                  index: 0,
+                  routes: [{ name: "App" }], // Yığını sıfırla ve HomeDrawer'a geç
+               })
+            }
+         />
       </View>
    );
 };

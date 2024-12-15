@@ -8,9 +8,15 @@ const LoginScreen = ({ navigation }) => {
    return (
       <SafeAreaView style={style.outerBox}>
          <View style={style.innerbox}>
-            <BannerComponent pStyle={style.banner} />
-            <FormComponent pStyle={style.form} />
-            <FooterComponent pStyle={style.footer} />
+            <View style={style.banner}>
+               <BannerComponent />
+            </View>
+            <View style={style.form}>
+               <FormComponent />
+            </View>
+            <View style={style.footer}>
+               <FooterComponent />
+            </View>
          </View>
       </SafeAreaView>
    );
@@ -31,10 +37,10 @@ const style = StyleSheet.create({
       alignItems: "center",
    },
    banner: {
-      flex: 2,
+      flex: 3,
    },
    form: {
-      flex: 1,
+      flex: 2,
    },
    footer: { flex: 1 },
 });

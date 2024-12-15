@@ -19,7 +19,7 @@ const mylocalizer = (trFilePath, enFilePath) => {
       init: () => {},
       cacheUserLanguage: () => {},
    };
-   i18n
+   return i18n
       .use(languageDetector)
       .use(initReactI18next)
       .init({

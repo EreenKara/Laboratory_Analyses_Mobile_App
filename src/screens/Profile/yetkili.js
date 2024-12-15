@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-const FooterComponent = () => {
+const YetkiliComponent = () => {
    return (
       <View>
-         <Text>FooterComponent</Text>
+         <Text>SADECE YEKİLİ GÖRCEK</Text>
       </View>
    );
 };
 
-export default FooterComponent;
+export default YetkiliComponent;

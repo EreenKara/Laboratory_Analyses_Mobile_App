@@ -1,12 +1,16 @@
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
 import React from "react";
-const welcome_image = "../../../assets/Login/welcome.jpg";
+import welcome_image from "assets/Login/welcome.jpg";
 
-const BannerComponent = ({ pStyle }) => {
+// bu değişecek türkçe inglizce AYRICA BUNU SUAN E_NABIZ UYGULAMASI İÇİN YPATIM KOALYCA ENTEGRE AETCEM BİZİMKİNE
+// SAMEDDEN MOBİLİ BEKLİYORUM
+//
+// BU BPROFİL EKTARNINDA Kullanıcalar sadece kendierine verilmiş roldekileri görcek
+// yetkililer de izinli oldukalrını görcek yani şöyle
+const BannerComponent = () => {
    return (
-      <View style={pStyle}>
-         <Image style={style.imageStyle} source={require(welcome_image)} />
-         <Text>BannerComponent</Text>
+      <View syle={style.viewstyle}>
+         <Image style={style.imageStyle} source={welcome_image} />
       </View>
    );
 };
@@ -14,9 +18,14 @@ const BannerComponent = ({ pStyle }) => {
 export default BannerComponent;
 
 const style = StyleSheet.create({
+   viewstyle: {
+      alignItems: "center",
+      justifyContent: "center",
+      flex: 1,
+   },
    imageStyle: {
+      flex: 1,
+      width: Dimensions.get("window").width,
       resizeMode: "contain",
-      width: 400,
-      height: 350,
    },
 });
