@@ -19,6 +19,13 @@
   Redux ve react-native-paper kurdum.
 
   JWT token backend'de kesinlikle secret key ile valid edilmeli.
+
+
+  ScrollView, SelectionList, VirtualizedList, FlatList arasındaki fark. Hocanın kodları biraz incelenebilir.
+
+  backgroundColor: "#8f8f8", GÜZEL BİR BACKGROUND HER YERDE KULLANILABİLİR.
+
+
 */
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";

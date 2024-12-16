@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
+import styles from "myutility/styles";
 
 const BoxComponent = ({ order, color, name, toNavigate }) => {
    const navigation = useNavigation();
@@ -19,7 +20,7 @@ const BoxComponent = ({ order, color, name, toNavigate }) => {
             style.container,
          ]}
       >
-         <Text>Bu bir {name} box'tur</Text>
+         <Text style={styles.text.plain}>Bu bir {name} box'tur</Text>
       </TouchableOpacity>
    );
 };

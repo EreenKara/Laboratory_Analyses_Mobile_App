@@ -1,7 +1,7 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import HomeScreen from "myscreens/Home";
-import AnalysisScreen from "myscreens/Analysis";
+import HomeScreen from "myscreens/Home/Default";
+import AnalysisScreen from "myscreens/Home/Analysis";
 import { GenelTabNavigator } from "mynavigations/tabNavigator";
 
 const Drawer = createDrawerNavigator();

@@ -9,7 +9,7 @@ module.exports = {
                mynavigations: "./src/navigations",
                myutility: "./src/utility",
                myredux: "./src/utility/redux",
-               myshared: "./src/Shared",
+               myshared: "./src/screens/Shared",
                myscreens: "./src/screens",
                mylocales: "./locales",
                myassets: "./assets",

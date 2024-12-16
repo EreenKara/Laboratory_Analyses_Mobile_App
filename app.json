@@ -1,28 +1,28 @@
 {
-  "expo": {
-    "name": "Laboratory_Analyses_Mobile_App",
-    "slug": "Laboratory_Analyses_Mobile_App",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+   "expo": {
+      "name": "Laboratory_Analyses_Mobile_App",
+      "slug": "Laboratory_Analyses_Mobile_App",
+      "version": "1.0.0",
+      "orientation": "portrait",
+      "icon": "./assets/expoIcons/icon.png",
+      "userInterfaceStyle": "light",
+      "newArchEnabled": true,
+      "splash": {
+         "image": "./assets/expoIcons/splash-icon.png",
+         "resizeMode": "contain",
+         "backgroundColor": "#ffffff"
+      },
+      "ios": {
+         "supportsTablet": true
+      },
+      "android": {
+         "adaptiveIcon": {
+            "foregroundImage": "./assets/expoIcons/adaptive-icon.png",
+            "backgroundColor": "#ffffff"
+         }
+      },
+      "web": {
+         "favicon": "./assets/expoIcons/favicon.png"
       }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
-  }
+   }
 }

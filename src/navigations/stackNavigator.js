@@ -4,12 +4,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GenelDrawerNavigator } from "mynavigations/drawerNavigator";
 import { GenelTabNavigator } from "mynavigations/tabNavigator";
 
-import HomeScreen from "myscreens/Home/index";
-import AnalysisScreen from "myscreens/Analysis/index";
-import LoginScreen from "myscreens/Login/index";
-import RegisterScreen from "myscreens/Register/index";
-import ProfileScreen from "myscreens/Profile/index";
-import APIScreen from "myscreens/APIDENEME/index";
+import HomeScreen from "myscreens/Home/Default/index";
+import AnalysisScreen from "myscreens/Home/Analysis/index";
+import LoginScreen from "myscreens/Auth/Login/index";
+import RegisterScreen from "myscreens/Auth/Register/index";
+import ProfileScreen from "myscreens/Profile/Default/index";
+import APIScreen from "myscreens/Home/APIDENEME/index";
+import DenemeScreen from "myscreens/Home/Deneme/deneme";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -50,10 +51,10 @@ const ProfileStackNavigator = () => {
    );
 };
 
-const AppStack = createNativeStackNavigator();
-const AppStackNavigator = () => {
+const HomeStack = createNativeStackNavigator();
+const HomeStackNavigator = () => {
    return (
-      <AppStack.Navigator
+      <HomeStack.Navigator
          initialRouteName="Home"
          screenOptions={({ navigation, route }) => ({
             headerTitleAlign: "center",
@@ -62,28 +63,35 @@ const AppStackNavigator = () => {
             headerRight: () => <NavBarLang />,
          })}
       >
-         <AppStack.Screen
+         <HomeStack.Screen
             name="Home"
             component={HomeScreen}
             options={() => ({
                title: "Anasayfa",
             })}
          />
-         <AppStack.Screen
+         <HomeStack.Screen
             name="Analysis"
             component={AnalysisScreen}
             options={() => ({
                title: "Analysis",
             })}
          />
-         <AppStack.Screen
+         <HomeStack.Screen
             name="APIDeneme"
             component={APIScreen}
             options={() => ({
                title: "API",
             })}
          />
-      </AppStack.Navigator>
+         <HomeStack.Screen
+            name="Deneme"
+            component={DenemeScreen}
+            options={() => ({
+               title: "Deneme",
+            })}
+         />
+      </HomeStack.Navigator>
    );
 };
 
@@ -96,7 +104,7 @@ const GenelStackNavigator = () => {
             headerShown: false,
          })}
       >
-         <GenelStack.Screen name="App" component={GenelDrawerNavigator} />
+         <GenelStack.Screen name="Home" component={GenelDrawerNavigator} />
          <GenelStack.Screen name="Auth" component={AuthStackNavigator} />
       </GenelStack.Navigator>
    );
@@ -104,7 +112,7 @@ const GenelStackNavigator = () => {
 
 export {
    GenelStackNavigator,
-   AppStackNavigator,
+   HomeStackNavigator,
    AuthStackNavigator,
    ProfileStackNavigator,
 };

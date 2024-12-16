@@ -1,20 +1,20 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
-   AppStackNavigator,
+   HomeStackNavigator,
    AuthStackNavigator,
    ProfileStackNavigator,
 } from "mynavigations/stackNavigator";
-import HomeScreen from "myscreens/Home/index";
-import LoginScreen from "myscreens/Login/index";
-import RegisterScreen from "myscreens/Register/index";
+import HomeScreen from "myscreens/Home/Default/index";
+import LoginScreen from "myscreens/Auth/Login/index";
+import RegisterScreen from "myscreens/Auth/Register/index";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 // import fa5 from "@expo/vector-icons/FontAwesome5";
 
 const Tab = createBottomTabNavigator();
 
-let appRoutingName = "App";
+let homeRoutingName = "Home";
 let profileRoutingName = "Profile";
 
 const GenelTabNavigator = () => {
@@ -25,7 +25,7 @@ const GenelTabNavigator = () => {
             headerShown: shownValue,
             tabBarIcon: ({ color, size }) => {
                let iconName;
-               if (route.name === appRoutingName) {
+               if (route.name === homeRoutingName) {
                   iconName = "home";
                } else if (route.name === profileRoutingName) {
                   iconName = "people";
@@ -35,8 +35,8 @@ const GenelTabNavigator = () => {
          })}
       >
          <Tab.Screen
-            name={appRoutingName}
-            component={AppStackNavigator}
+            name={homeRoutingName}
+            component={HomeStackNavigator}
             options={{
                tabBarLabel: "Home",
             }}

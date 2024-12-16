@@ -13,7 +13,7 @@ import { StyleSheet } from "react-native";
 const textStyles = StyleSheet.create({
    header: {
       // fontFamily: "Montserrat-Regular",
-      fontSize: 15,
+      fontSize: 20,
       fontWeight: "bold",
       fontStyle: "normal",
    },
@@ -23,3 +23,9 @@ const textStyles = StyleSheet.create({
       fontStyle: "normal",
    },
 });
+
+const styles = {
+   text: textStyles,
+};
+
+export default styles;
