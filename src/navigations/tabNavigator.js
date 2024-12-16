@@ -4,10 +4,10 @@ import {
    AppStackNavigator,
    AuthStackNavigator,
    ProfileStackNavigator,
-} from "navigations/stackNavigator";
-import HomeScreen from "screens/Home/index";
-import LoginScreen from "screens/Login/index";
-import RegisterScreen from "screens/Register/index";
+} from "mynavigations/stackNavigator";
+import HomeScreen from "myscreens/Home/index";
+import LoginScreen from "myscreens/Login/index";
+import RegisterScreen from "myscreens/Register/index";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 // import fa5 from "@expo/vector-icons/FontAwesome5";

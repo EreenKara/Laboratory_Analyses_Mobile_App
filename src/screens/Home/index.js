@@ -2,15 +2,13 @@ import { Button } from "@react-navigation/elements";
 import * as React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import BoxList from "./box_list";
+import { SECRET_KEY } from "@env";
 
 function HomeScreen({ navigation }) {
    return (
       <View>
          <BoxList />
-         <Button
-            title="Tikla"
-            onPress={() => navigation.navigate("Analysis")}
-         />
+         <Text>.env deneme Secret Key: {SECRET_KEY}</Text>
       </View>
    );
 }

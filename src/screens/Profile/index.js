@@ -1,11 +1,13 @@
 import { SafeAreaView, View, Text } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import YetkiliComponent from "./yetkili";
+import OptionComponent from "./option";
 
 const ProfileScreen = () => {
    return (
       <SafeAreaView>
-         <Text>ProfileScreen'dasiniz şuan</Text>
+         <Text>Profile ekrani</Text>
+         <OptionComponent />
       </SafeAreaView>
    );
 };

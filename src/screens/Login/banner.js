@@ -1,12 +1,8 @@
 import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
 import React from "react";
-import welcome_image from "assets/Login/welcome.jpg";
+import welcome_image from "myassets/screens/Login/welcome.jpg";
+import hosgeldiniz_image from "myassets/screens/Login/hosgeldiniz.jpg";
 
-// bu değişecek türkçe inglizce AYRICA BUNU SUAN E_NABIZ UYGULAMASI İÇİN YPATIM KOALYCA ENTEGRE AETCEM BİZİMKİNE
-// SAMEDDEN MOBİLİ BEKLİYORUM
-//
-// BU BPROFİL EKTARNINDA Kullanıcalar sadece kendierine verilmiş roldekileri görcek
-// yetkililer de izinli oldukalrını görcek yani şöyle
 const BannerComponent = () => {
    return (
       <View syle={style.viewstyle}>

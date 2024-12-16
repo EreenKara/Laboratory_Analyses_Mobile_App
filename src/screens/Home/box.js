@@ -37,7 +37,4 @@ const style = StyleSheet.create({
    innerBox: {},
 });
 
-BoxComponent.defaultProps = {
-   color: "red", // Varsayılan değer
-};
 export default BoxComponent;

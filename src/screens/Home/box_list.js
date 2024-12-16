@@ -7,10 +7,11 @@ const BoxList = () => {
    // JSX dışında bir dizi oluştur
    const navigation = useNavigation();
    const boxes = [];
-   const names = ["Analysis", "Home"];
+   const names = ["Analysis", "Home", "APIDeneme"];
    for (let index = 0; index < names.length; index++) {
       boxes.push(
          <BoxComponent
+            key={index}
             order={index}
             name={names.at(index)}
             color="red"
@@ -27,7 +28,5 @@ const styles = StyleSheet.create({
       flexWrap: "wrap",
    },
 });
-
-BoxList.defaultProps = {};
 
 export default BoxList;

@@ -1,17 +1,21 @@
 import React from "react";
 import { Button, TouchableOpacity, Dimensions } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { GenelDrawerNavigator } from "navigations/drawerNavigator";
-import { GenelTabNavigator } from "navigations/tabNavigator";
+import { GenelDrawerNavigator } from "mynavigations/drawerNavigator";
+import { GenelTabNavigator } from "mynavigations/tabNavigator";
 
-import HomeScreen from "screens/Home/index";
-import AnalysisScreen from "screens/Analysis/index";
-import LoginScreen from "screens/Login/index";
-import RegisterScreen from "screens/Register/index";
-import ProfileScreen from "screens/Profile/index";
+import HomeScreen from "myscreens/Home/index";
+import AnalysisScreen from "myscreens/Analysis/index";
+import LoginScreen from "myscreens/Login/index";
+import RegisterScreen from "myscreens/Register/index";
+import ProfileScreen from "myscreens/Profile/index";
+import APIScreen from "myscreens/APIDENEME/index";
+
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import NavBarTitle from "shared/navbar_title";
+import NavBarTitle from "myshared/navbar_title";
+import NavBarLeft from "myshared/navbar_left";
+import NavBarLang from "myshared/navbar_lang";
 
 const AuthStack = createNativeStackNavigator();
 const AuthStackNavigator = () => {
@@ -54,11 +58,8 @@ const AppStackNavigator = () => {
          screenOptions={({ navigation, route }) => ({
             headerTitleAlign: "center",
             headerTitle: () => <NavBarTitle />,
-            headerLeft: () => (
-               <TouchableOpacity onPress={({}) => navigation.toggleDrawer()}>
-                  <Ionicons name="menu" size={20} color="black" />
-               </TouchableOpacity>
-            ),
+            headerLeft: () => <NavBarLeft navigation={navigation} />,
+            headerRight: () => <NavBarLang />,
          })}
       >
          <AppStack.Screen
@@ -73,6 +74,13 @@ const AppStackNavigator = () => {
             component={AnalysisScreen}
             options={() => ({
                title: "Analysis",
+            })}
+         />
+         <AppStack.Screen
+            name="APIDeneme"
+            component={APIScreen}
+            options={() => ({
+               title: "API",
             })}
          />
       </AppStack.Navigator>

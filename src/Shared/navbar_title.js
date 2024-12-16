@@ -1,5 +1,5 @@
 import { Image, StyleSheet } from "react-native";
-import navlogo from "assets/Shared/navlogo.png";
+import navlogo from "myassets/screens/Shared/navlogo.png";
 
 const NavBarTitle = () => {
    return <Image style={style.imagestyle} source={navlogo} />;
