@@ -8,65 +8,103 @@ import {
    TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
+import { loginUserSchema } from "myutility/validations";
 import { useNavigation } from "@react-navigation/native";
+import { Formik } from "formik";
 
 const width = Dimensions.get("window").width / 1.4;
-
 const FormComponent = () => {
    const navigation = useNavigation();
-   const [TC, setTC] = useState(0);
-   const [password, setPassword] = useState("");
-
-   const handleSubmit = () => {
-      const user = {
-         TC: TC,
-         password: password,
-      };
-   };
 
    return (
-      <View style={{ flex: 1, width: "100%" }}>
-         <TextInput
-            style={style.textInput}
-            placeholder="TC"
-            keyboardType="numeric"
-            autoFocus={true}
-            placeholderTextColor="#929292"
-            clearButtonMode="always"
-            value={TC}
-            onChangeText={(text) => setTC(text)}
-         />
-         <TextInput
-            style={style.textInput}
-            placeholder="Sifre"
-            secureTextEntry={true}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-         />
-         <TouchableOpacity
-            style={style.button}
-            onPress={() =>
-               navigation.reset({
-                  index: 0,
-                  routes: [{ name: "Home" }], // Yığını sıfırla ve HomeDrawer'a geç
-               })
+      <Formik
+         initialValues={{
+            // state tanimlamalari
+            TC: "",
+            password: "",
+         }}
+         onSubmit={(values, bag) => {
+            // bag.setErrors();
+            // bag.setFieldError();
+            if (values.TC === "53791548800") {
+               return bag.setErrors({ TC: "Bu TC kullanımda" });
             }
-         >
-            <Text style={style.text}>Giriş yap</Text>
-         </TouchableOpacity>
+            bag.resetForm();
+         }}
+         validationSchema={loginUserSchema}
+      >
+         {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isSubmitting,
+            /* and other goodies */
+         }) => (
+            <View style={{ flex: 1, width: "100%" }}>
+               {errors.TC && touched.TC && (
+                  <Text style={style.errorText}>{errors.TC}</Text>
+               )}
+               <TextInput
+                  style={style.textInput}
+                  placeholder="TC"
+                  keyboardType="numeric"
+                  autoFocus={true}
+                  placeholderTextColor="#929292"
+                  clearButtonMode="always"
+                  value={values.TC}
+                  onChangeText={handleChange("TC")}
+                  onBlur={handleBlur("TC")}
+                  editable={!isSubmitting}
+               />
+               {errors.password && touched.password && (
+                  <Text style={style.errorText}>{errors.password}</Text>
+               )}
+               <TextInput
+                  style={style.textInput}
+                  placeholder="Sifre"
+                  secureTextEntry={true}
+                  value={values.password}
+                  onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
+                  editable={!isSubmitting}
+               />
+               <TouchableOpacity
+                  style={style.button}
+                  onPress={handleSubmit}
+                  disabled={isSubmitting}
+               >
+                  <Text style={style.text}>Giriş Yap</Text>
+               </TouchableOpacity>
 
-         <TouchableOpacity
-            style={style.button}
-            onPress={() =>
-               navigation.reset({
-                  index: 0,
-                  routes: [{ name: "Register" }], // Yığını sıfırla ve HomeDrawer'a geç
-               })
-            }
-         >
-            <Text style={style.text}>Kayıt Olun</Text>
-         </TouchableOpacity>
-      </View>
+               <TouchableOpacity
+                  style={style.button}
+                  onPress={() =>
+                     navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Home" }], // Yığını sıfırla ve HomeDrawer'a geç
+                     })
+                  }
+               >
+                  <Text style={style.text}>to Home</Text>
+               </TouchableOpacity>
+
+               <TouchableOpacity
+                  style={style.button}
+                  onPress={() =>
+                     navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Register" }], // Yığını sıfırla ve HomeDrawer'a geç
+                     })
+                  }
+               >
+                  <Text style={style.text}>Kayıt Olun</Text>
+               </TouchableOpacity>
+            </View>
+         )}
+      </Formik>
    );
 };
 
@@ -81,27 +119,6 @@ placeholder="Arama yapın"
 autoFocus={true}
 style={{backgroundColor:'#fff', paddingHorizontal:20}}
 /> */
-}
-{
-   /* <FlatList 
-                      ListHeaderComponent={renderHeader}
-                      data={data}
-                      keyExtractor={ item => item.name.first}
-                      renderItem={ ({item}) => (
-                              <View style={styles.listItem}>
-                                  <Image
-                                        source={{ uri: item.picture.large }}
-                                        style={styles.coverImage} 
-                                  />
-
-                                  <View style={styles.metaInfo}>
-                                        <Text style={styles.title}> {`${item.name.first} ${item.name.last}`} </Text>
-                                        <Text style={styles.title}>Age: {`${item.dob.age} ${item.location.country}`}</Text>
-                                  </View>
-
-                              </View>
-                      )}
-            /> */
 }
 
 const style = StyleSheet.create({
@@ -118,6 +135,11 @@ const style = StyleSheet.create({
    text: {
       fontSize: 18,
       color: "white",
+   },
+   errorText: {
+      fontSize: 14,
+      fontWeight: "bold",
+      color: "red",
    },
    button: {
       marginTop: 10,

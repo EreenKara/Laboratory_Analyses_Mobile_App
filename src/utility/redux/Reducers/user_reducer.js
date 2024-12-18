@@ -3,25 +3,22 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // initialState: uygulamanın başındaki default state
 const initialState = {
-   count: 0,
+   user: null,
 };
 
 const userSlice = createSlice({
-   name: "counter", // state adı
+   name: "user", // state adı
    initialState,
    reducers: {
-      increment: (state) => {
-         state.count += 1; // count değerini arttırır
+      setUser: (state, action) => {
+         state.user = action.payload;
       },
-      decrement: (state) => {
-         state.count -= 1; // count değerini azaltır
-      },
-      reset: (state) => {
-         state.count = 0; // count'u sıfırlar
+      clearUser: (state) => {
+         state.user = null; // Kullanıcıyı temizle
       },
    },
 });
 
-export const { increment, decrement, reset } = userSlice.actions;
+export const { setUser, clearUser } = userSlice.actions;
 
 export default userSlice.reducer;

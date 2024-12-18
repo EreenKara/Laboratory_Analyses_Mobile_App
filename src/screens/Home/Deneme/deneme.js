@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
-
+import * as SQLite from "expo-sqlite";
 const DenemeScreen = () => {
    const [isOpen, setIsOpen] = useState(false); // Dropdown'un açık/kapalı durumu
    const [selectedLanguage, setSelectedLanguage] = useState("Türkçe"); // Varsayılan dil
@@ -14,6 +14,9 @@ const DenemeScreen = () => {
       setSelectedLanguage(language); // Seçilen dili kaydet
       setIsOpen(false); // Dropdown'u kapat
    };
+   const firstRow = SQLite.openDatabaseSync("mydatabase.db").getFirstSync(
+      "SELECT * FROM users"
+   );
 
    return (
       <View style={styles.container}>
@@ -45,6 +48,7 @@ const DenemeScreen = () => {
                />
             </View>
          )}
+         <Text>{JSON.stringify(firstRow, null, 2)}</Text>
       </View>
    );
 };

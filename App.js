@@ -34,11 +34,23 @@ import { GenelTabNavigator } from "mynavigations/tabNavigator";
 import { GenelDrawerNavigator } from "mynavigations/drawerNavigator";
 import { GenelStackNavigator } from "mynavigations/stackNavigator";
 import { Provider } from "react-native-paper";
-
+import mySqlLite from "myutility/sqllite_storage";
+import LoadingComponent from "myshared/loading";
 import store from "myredux/store";
+import { useEffect, useState } from "react";
 
 export default function App() {
-   return (
+   const [isLoading, setIsLoading] = useState(true);
+   const preparations = () => {
+      mySqlLite.seedData();
+      setIsLoading(false);
+   };
+   useEffect(() => {
+      preparations();
+   }, []);
+   return isLoading ? (
+      <LoadingComponent />
+   ) : (
       <Provider store={store}>
          <NavigationContainer>
             <GenelStackNavigator />

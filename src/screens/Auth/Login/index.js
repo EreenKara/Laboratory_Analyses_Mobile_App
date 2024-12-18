@@ -1,10 +1,20 @@
-import { View, Text, StyleSheet, Button, SafeAreaView } from "react-native";
+import {
+   View,
+   Text,
+   StyleSheet,
+   Button,
+   SafeAreaView,
+   KeyboardAvoidingView,
+} from "react-native";
 import React from "react";
 import BannerComponent from "./banner.js";
 import FormComponent from "./form.js";
 import FooterComponent from "./footer.js";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 const LoginScreen = ({ navigation }) => {
+   const height = useHeaderHeight();
+
    return (
       <SafeAreaView style={style.outerBox}>
          <View style={style.innerbox}>
@@ -14,9 +24,9 @@ const LoginScreen = ({ navigation }) => {
             <View style={style.form}>
                <FormComponent />
             </View>
-            <View style={style.footer}>
+            {/* <View style={style.footer}>
                <FooterComponent />
-            </View>
+            </View> */}
          </View>
       </SafeAreaView>
    );
@@ -25,6 +35,9 @@ const LoginScreen = ({ navigation }) => {
 export default LoginScreen;
 
 const style = StyleSheet.create({
+   container: {
+      flex: 1,
+   },
    outerBox: {
       flex: 1,
       justifyContent: "center",
@@ -40,7 +53,7 @@ const style = StyleSheet.create({
       flex: 3,
    },
    form: {
-      flex: 2,
+      flex: 3,
    },
    footer: { flex: 1 },
 });
