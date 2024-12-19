@@ -21,9 +21,6 @@ const RegisterScreen = ({ navigation }) => {
             <View style={style.form}>
                <FormComponent />
             </View>
-            <View style={style.footer}>
-               <FooterComponent />
-            </View>
          </View>
       </SafeAreaView>
    );

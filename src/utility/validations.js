@@ -70,12 +70,15 @@ const passwordConfirmValidation = string()
    .required("Şifre zorunludur")
    .oneOf([ref("password")]); // obje oluştururken password vereceğimizden burası passwordVAlidation değil password kalmalı
 
+const genderValidation = string()
+   .oneOf(["Kadin", "Erkek"], "Cinsiyet sadece 'Kadin' veya 'Erkek' olabilir")
+   .required("Cinsiyet seçimi zorunludur");
+
 const registerUserSchema = object({
    name: nameValidation,
    surname: surnameValidation,
    TC: TCValidation,
-   age: ageValidation,
-   email: emailValidation,
+   gender: genderValidation,
    birthDate: birthDateValidation,
    password: passwordValidation,
    passwordConfirm: passwordConfirmValidation,

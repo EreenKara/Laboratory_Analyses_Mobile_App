@@ -17,6 +17,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import NavBarTitle from "myshared/navbar_title";
 import NavBarLeft from "myshared/navbar_left";
 import NavBarLang from "myshared/navbar_lang";
+import DBScreen from "../screens/Home/DB";
 
 const AuthStack = createNativeStackNavigator();
 const AuthStackNavigator = () => {
@@ -89,6 +90,13 @@ const HomeStackNavigator = () => {
             component={DenemeScreen}
             options={() => ({
                title: "Deneme",
+            })}
+         />
+         <HomeStack.Screen
+            name="DB"
+            component={DBScreen}
+            options={() => ({
+               title: "DB",
             })}
          />
       </HomeStack.Navigator>

@@ -7,7 +7,7 @@ const BoxList = () => {
    // JSX dışında bir dizi oluştur
    const navigation = useNavigation();
    const boxes = [];
-   const names = ["Analysis", "Home", "APIDeneme", "Deneme"];
+   const names = ["Analysis", "Home", "APIDeneme", "Deneme", "DB"];
    for (let index = 0; index < names.length; index++) {
       boxes.push(
          <BoxComponent
