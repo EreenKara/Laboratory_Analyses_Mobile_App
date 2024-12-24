@@ -1,3 +1,8 @@
+/*
+ Eğerki backend olursa bir gün buradaki fonksiyonların içeriğindeki sql sorguları yerine fetch kullan.
+ Böylece her şey aynı kalırken kolayca backend'e geçmiş oluruz.
+*/
+
 import { Text, View } from "react-native";
 
 import * as SQLite from "expo-sqlite";
@@ -23,7 +28,7 @@ const createDatabase = () => {
              FOREIGN KEY(role_id) REFERENCES roles(id));
              
              
-             CREATE TABLE IF NOT EXISTS user_roles 
+             CREATE TABLE IF NOT EXISTS users_roles 
             (id INTEGER PRIMARY KEY,
             user_id INTEGER,
             role_id INTEGER,
@@ -54,16 +59,29 @@ const createDatabase = () => {
 
          CREATE TABLE IF NOT EXISTS analysis (id INTEGER PRIMARY KEY AUTOINCREMENT,
          hospital_name TEXT,
+         date TEXT,         
          user_id INTEGER,
          FOREIGN KEY(user_id) REFERENCES users(id));
 
          CREATE TABLE IF NOT EXISTS analysis_elements (id INTEGER PRIMARY KEY AUTOINCREMENT,
          analysis_id INTEGER,
          element_id INTEGER,
+         value REAL,
          FOREIGN KEY(analysis_id) REFERENCES analysis(id),
          FOREIGN KEY(element_id) REFERENCES elements(id));
              `);
    db.closeSync();
+};
+const tahlilGetir = (TC) => {
+   const db = SQLite.openDatabaseSync(dbName);
+   const tahliller = db.getAllSync(`SELECT *
+      FROM analysis
+      JOIN analysis_elements ON analysis.id = analysis_elements.analysis_id
+      JOIN elements ON analysis_elements.element_id = elements.id
+      JOIN users ON analysis.user_id = users.id
+      `);
+   console.log("tahlliller:");
+   console.log(tahliller[0]);
 };
 const seedData = () => {
    createDatabase();
@@ -74,7 +92,7 @@ const seedData = () => {
 
       db.runSync(
          "INSERT INTO users (name,surname,password,TC,gender,birth_date,role_id) VALUES (?,?,?,?,?,?,?)",
-         ["Eren", "Kara", "eren123A.", "12345678901", "Erkek", "2001-11-06", 3]
+         ["Eren", "Kara", "eren123A.", "53791548800", "Erkek", "2001-11-06", 3]
       );
    } else {
       console.log("users tablosunda zaten veri var.");
@@ -96,8 +114,14 @@ const seedData = () => {
 
 const deleteDatabase = async () => {
    const dbPath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
-   const fileExists = await FileSystem.getInfoAsync(dbPath);
-   if (fileExists.exists) {
+   const bool_fileExists = await FileSystem.getInfoAsync(dbPath)
+      .then((fileInfo) => fileInfo.exists)
+      .catch((error) => {
+         console.error("Dosya kontrolü hatası:", error);
+         return false;
+      });
+   console.log("hata enrde");
+   if (bool_fileExists) {
       SQLite.deleteDatabaseSync(dbName);
       console.log(`${dbName} silindi.`);
    } else {
@@ -106,7 +130,7 @@ const deleteDatabase = async () => {
 };
 const getRoles = () => {
    const db = SQLite.openDatabaseSync(dbName);
-   const resultRoles = db.getAllSync("SELECT * FROM roles");
+   const resultRoles = db.getAllSync("SELECT * FROM roles;");
    // db.getAllAsync('SELECT * FROM test WHERE intValue = ? AND name = ?', 1, 'Hello');
    let dizi = [];
    for (let index = 0; index < resultRoles.length; index++) {
@@ -118,7 +142,7 @@ const getRoles = () => {
 };
 const getUsers = () => {
    const db = SQLite.openDatabaseSync(dbName);
-   const resultUsers = db.getAllSync("SELECT *  FROM users");
+   const resultUsers = db.getAllSync("SELECT *  FROM users;");
    // db.getAllAsync('SELECT * FROM test WHERE intValue = ? AND name = ?', 1, 'Hello');
    let dizi = [];
    for (let index = 0; index < resultUsers.length; index++) {
@@ -128,11 +152,76 @@ const getUsers = () => {
 
    return resultUsers;
 };
+
+const getUserRoleWithTC = (TC) => {
+   const db = SQLite.openDatabaseSync(dbName);
+   const role = db.getFirstSync(
+      `SELECT users.TC,roles.role_name FROM users JOIN roles ON users.role_id = roles.id
+                        WHERE users.TC = ?;`,
+      TC
+   );
+   db.closeSync();
+   console.log("role:");
+   console.log(role);
+   return role.role_name;
+};
+const getUserRole = (id) => {
+   const db = SQLite.openDatabaseSync(dbName);
+   const user = db.getFirstSync(
+      `SELECT users.name, users.surname, roles.role_name
+                        FROM users
+                        JOIN roles ON users.role_id = roles.id
+                        WHERE users.id = ?;`,
+      id
+   );
+
+   db.closeSync();
+   return user.role_name;
+};
+
+const addUser = (user) => {
+   // Burad verilen parametre olarak verilen user gerçekten isteidğimiz user objesinden mi cehck edilebilir.
+   const db = SQLite.openDatabaseSync(dbName);
+   const user_role_id_fk = db.getFirstSync(
+      "SELECT id FROM roles WHERE role_name= user;"
+   );
+
+   db.runSync(
+      `INSERT INTO users (name,surname,password,TC,gender,birth_date,role_id) VALUES (?,?,?,?,?,?,?);`,
+      [
+         user.name,
+         user.surname,
+         user.password,
+         user.TC,
+         user.gender,
+         user.birth_date,
+         user_role_id_fk,
+      ]
+   );
+   db.closeSync();
+};
+
+const checkUser = (TC, password) => {
+   const db = SQLite.openDatabaseSync(dbName);
+   const user_role_id_fk = db.getFirstSync(
+      "SELECT * FROM users WHERE TC=? AND password = ?;",
+      [TC, password]
+   );
+   db.closeSync();
+   if (user_role_id_fk) return true;
+   return false;
+};
+
 const mySqlLite = {
    createDatabase: createDatabase,
    seedData: seedData,
    deleteDatabase: deleteDatabase,
    getRoles: getRoles,
    getUsers: getUsers,
+   getUserRole: getUserRole,
+   getUserRoleWithTC: getUserRoleWithTC,
+   addUser: addUser,
+   checkUser: checkUser,
+   tahlilGetir: tahlilGetir,
 };
 export default mySqlLite;

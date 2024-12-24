@@ -74,19 +74,46 @@ const genderValidation = string()
    .oneOf(["Kadin", "Erkek"], "Cinsiyet sadece 'Kadin' veya 'Erkek' olabilir")
    .required("Cinsiyet seçimi zorunludur");
 
-const registerUserSchema = object({
+// const registerUserSchema = object({
+//    name: nameValidation,
+//    surname: surnameValidation,
+//    TC: TCValidation,
+//    gender: genderValidation,
+//    birthDate: birthDateValidation,
+//    password: passwordValidation,
+//    passwordConfirm: passwordConfirmValidation,
+// });
+const userDataSchema = object({
    name: nameValidation,
    surname: surnameValidation,
    TC: TCValidation,
    gender: genderValidation,
-   birthDate: birthDateValidation,
+   birth_date: birthDateValidation,
+});
+
+const registerUserSchema = object({
+   email: emailValidation,
    password: passwordValidation,
    passwordConfirm: passwordConfirmValidation,
 });
-
 const loginUserSchema = object({
-   TC: TCValidation,
+   email: emailValidation,
    password: passwordValidation,
 });
+const analysisSchema = object({
+   doctor_id: string().required(),
+   // hospital_name: string().required(),
+   // date: date().required(),
+   // numune_alma_zamani: date().required(),
+   // numune_kabul_zamani: date().required(),
+   // numune_turu: string().required(),
+   // rapor_grubu: string().required(),
+   // tetkik_istek_zamani: date().required(),
+   // user_id: string().required(),
+   // uzman_onay_kabul_zamani: date().required(),
+});
 
-export { registerUserSchema, loginUserSchema };
+/*
+Kırmızı'dan yeşile dönmesiin sağla eğer herhangi biri yanlışken doğru olursa. 
+*/
+export { registerUserSchema, loginUserSchema, analysisSchema, userDataSchema };

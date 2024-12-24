@@ -9,15 +9,18 @@ import AnalysisScreen from "myscreens/Home/Analysis/index";
 import LoginScreen from "myscreens/Auth/Login/index";
 import RegisterScreen from "myscreens/Auth/Register/index";
 import ProfileScreen from "myscreens/Profile/Default/index";
-import APIScreen from "myscreens/Home/APIDENEME/index";
-import DenemeScreen from "myscreens/Home/Deneme/deneme";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import NavBarTitle from "myshared/navbar_title";
 import NavBarLeft from "myshared/navbar_left";
 import NavBarLang from "myshared/navbar_lang";
-import DBScreen from "../screens/Home/DB";
+import DBScreen from "myscreens/Home/DB";
+import KlavuzGirScreen from "myscreens/Home/KlavuzGir/index";
+import KlavuzGetirScreen from "myscreens/Home/KlavuzGetir/index";
+import HastaninTahliliniGoruntuleScreen from "myscreens/Home/HastaninTahliliniGoruntule/index";
+import TahlilSonucuGirScreen from "../screens/Home/TahlilSonucuGir";
+import UserDataScreen from "myscreens/Auth/UserData/index";
 
 const AuthStack = createNativeStackNavigator();
 const AuthStackNavigator = () => {
@@ -32,6 +35,7 @@ const AuthStackNavigator = () => {
       >
          <AuthStack.Screen name="Login" component={LoginScreen} />
          <AuthStack.Screen name="Register" component={RegisterScreen} />
+         <AuthStack.Screen name="UserData" component={UserDataScreen} />
       </AuthStack.Navigator>
    );
 };
@@ -58,6 +62,9 @@ const HomeStackNavigator = () => {
       <HomeStack.Navigator
          initialRouteName="Home"
          screenOptions={({ navigation, route }) => ({
+            headerStyle: {
+               backgroundColor: "#FBF6E9",
+            },
             headerTitleAlign: "center",
             headerTitle: () => <NavBarTitle />,
             headerLeft: () => <NavBarLeft navigation={navigation} />,
@@ -79,24 +86,38 @@ const HomeStackNavigator = () => {
             })}
          />
          <HomeStack.Screen
-            name="APIDeneme"
-            component={APIScreen}
-            options={() => ({
-               title: "API",
-            })}
-         />
-         <HomeStack.Screen
-            name="Deneme"
-            component={DenemeScreen}
-            options={() => ({
-               title: "Deneme",
-            })}
-         />
-         <HomeStack.Screen
             name="DB"
             component={DBScreen}
             options={() => ({
                title: "DB",
+            })}
+         />
+         <HomeStack.Screen
+            name="TahlilSonucuGir"
+            component={TahlilSonucuGirScreen}
+            options={() => ({
+               title: "TahlilSonucuGir",
+            })}
+         />
+         <HomeStack.Screen
+            name="KlavuzGir"
+            component={KlavuzGirScreen}
+            options={() => ({
+               title: "KlavuzGir",
+            })}
+         />
+         <HomeStack.Screen
+            name="KlavuzGetir"
+            component={KlavuzGetirScreen}
+            options={() => ({
+               title: "KlavuzGetir",
+            })}
+         />
+         <HomeStack.Screen
+            name="HastaninTahliliniGoruntule"
+            component={HastaninTahliliniGoruntuleScreen}
+            options={() => ({
+               title: "HastaninTahliliniGoruntule",
             })}
          />
       </HomeStack.Navigator>

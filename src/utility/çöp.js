@@ -1,44 +1,261 @@
-this.dbOpen().transaction((tx) => {
-   tx.executeSql(`CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT,
-           name TEXT,
-           surname TEXT,
-           TC TEXT NOT NULL UNIQUE,
-           gender BOOLEAN,
-           birth_date TEXT
-           role_id INTEGER,
-           FOREIGN KEY(role_id) REFERENCES roles(id))`);
-   tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS roles (id INTEGER PRIMARY KEY, role_name TEXT UNIQUE NOT NULL)`
+import {
+   View,
+   Text,
+   Button,
+   TextInput,
+   StyleSheet,
+   Dimensions,
+   TouchableOpacity,
+} from "react-native";
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { registerUserSchema } from "myutility/validations";
+import { Formik } from "formik";
+import mySqlLite from "myutility/sqllite_storage";
+const width = Dimensions.get("window").width / 1.4;
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "myredux/Reducers/user_reducer";
+
+const FormComponent = () => {
+   const navigation = useNavigation();
+   const dispatch = useDispatch();
+   const options = ["Kadin", "Erkek"];
+
+   return (
+      <Formik
+         initialValues={{
+            // state tanimlamalari
+            name: "",
+            surname: "",
+            gender: "",
+            birth_date: null,
+            TC: "",
+            password: "",
+            passwordConfirm: "",
+         }}
+         onSubmit={(values, bag) => {
+            // bag.setFieldError();
+
+            const user_in_use = mySqlLite.checkUser(values.TC);
+            if (user_in_use) {
+               bag.resetForm();
+               bag.setErrors({ TC: "YANLIS giris yapildi " });
+               console.log("hatali giris");
+               return;
+            }
+            mySqlLite.addUser({ ...values });
+            console.log("duzgun kayit");
+            console.log({ ...values });
+            dispatch(setUser({ TC: values.TC }));
+            navigation.navigate("Home");
+         }}
+         validationSchema={registerUserSchema}
+      >
+         {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isSubmitting,
+            /* and other goodies */
+         }) => (
+            <View style={{ flex: 1, width: "100%" }}>
+               {errors.name && touched.name && (
+                  <Text style={style.errorText}>{errors.name}</Text>
+               )}
+               <TextInput
+                  style={style.textInput}
+                  placeholder="İsim"
+                  keyboardType="default"
+                  autoFocus={true}
+                  value={values.name}
+                  onChangeText={handleChange("name")}
+                  onBlur={handleBlur("name")}
+                  editable={!isSubmitting}
+               />
+               {errors.gender && touched.gender && (
+                  <Text style={style.errorText}>{errors.gender}</Text>
+               )}
+               <View style={style.radioButtons}>
+                  {options.map((option, index) => (
+                     <TouchableOpacity
+                        key={index}
+                        style={style.radioButtonContainer}
+                        onPress={() => {
+                           handleChange("gender")(option);
+                        }}
+                     >
+                        <View
+                           style={
+                              values.gender === option
+                                 ? [
+                                      style.radioButton,
+                                      { backgroundColor: "black" },
+                                   ]
+                                 : style.radioButton
+                           }
+                        >
+                           {values.gender === option && (
+                              <View style={[style.radioButtonSelected]} />
+                           )}
+                        </View>
+                        <Text style={style.radioButtonLabel}>{option}</Text>
+                     </TouchableOpacity>
+                  ))}
+               </View>
+               {errors.surname && touched.surname && (
+                  <Text style={style.errorText}>{errors.surname}</Text>
+               )}
+               <TextInput
+                  style={style.textInput}
+                  placeholder="Soyisim"
+                  keyboardType="default"
+                  value={values.surname}
+                  onChangeText={handleChange("surname")}
+                  onBlur={handleBlur("surname")}
+                  editable={!isSubmitting}
+               />
+
+               {errors.birth_date && touched.birth_date && (
+                  <Text style={style.errorText}>{errors.birth_date}</Text>
+               )}
+               <TextInput
+                  style={style.textInput}
+                  placeholder="Dogum Tarihi"
+                  keyboardType="default"
+                  placeholderTextColor="#929292"
+                  value={values.birth_date}
+                  onChangeText={handleChange("birth_date")}
+                  onBlur={handleBlur("birth_date")}
+                  editable={!isSubmitting}
+               />
+
+               {errors.TC && touched.TC && (
+                  <Text style={style.errorText}>{errors.TC}</Text>
+               )}
+               <TextInput
+                  style={style.textInput}
+                  placeholder="TC"
+                  keyboardType="numeric"
+                  placeholderTextColor="#929292"
+                  value={values.TC}
+                  onChangeText={handleChange("TC")}
+                  onBlur={handleBlur("TC")}
+                  editable={!isSubmitting}
+               />
+               {errors.password && touched.password && (
+                  <Text style={style.errorText}>{errors.password}</Text>
+               )}
+               <TextInput
+                  style={style.textInput}
+                  placeholder="Sifre"
+                  secureTextEntry={true}
+                  value={values.password}
+                  onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
+                  editable={!isSubmitting}
+               />
+               <TextInput
+                  style={style.textInput}
+                  placeholder="Sifre Dogrulama"
+                  secureTextEntry={true}
+                  value={values.passwordConfirm}
+                  onChangeText={handleChange("passwordConfirm")}
+                  onBlur={handleBlur("passwordConfirm")}
+                  editable={!isSubmitting}
+               />
+               <TouchableOpacity
+                  style={style.button}
+                  onPress={handleSubmit}
+                  disabled={isSubmitting}
+               >
+                  <Text style={style.text}>Register</Text>
+               </TouchableOpacity>
+
+               <TouchableOpacity
+                  style={style.button}
+                  onPress={() =>
+                     navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Home" }], // Yığını sıfırla ve HomeDrawer'a geç
+                     })
+                  }
+               >
+                  <Text style={style.text}>Giriş yap</Text>
+               </TouchableOpacity>
+               <TouchableOpacity
+                  style={style.button}
+                  onPress={() =>
+                     navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Register" }], // Yığını sıfırla ve HomeDrawer'a geç
+                     })
+                  }
+               >
+                  <Text style={style.text}>Kayıt olun</Text>
+               </TouchableOpacity>
+            </View>
+         )}
+      </Formik>
    );
-   tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS user_roles 
-          (id INTEGER PRIMARY KEY,
-          user_id INTEGER,
-          role_id INTEGER,
-          FOREIGN KEY(user_id) REFERENCES users(id),
-          FOREIGN KEY(role_id) REFERENCES roles(id),
-          UNIQUE(user_id, role_id))`
-   );
-   tx.executeSql(`CREATE TABLE IF NOT EXIST guides (id INTEGER PRIMARY KEY AUTOINCREMENT,
-          element_id INTEGER,
-          FOREIGN KEY(element_id) REFERENCES elements(id),
-          min_age INTEGER,
-          max_age INTEGER,
-          age_format TEXT,
-          subject_number INTEGER,
-          min_value REAL,
-          max_value REAL,
-          mean_value REAL,
-          mean_value_sd REAL,
-          geotmetric_mean REAL,
-          geotmetric_mean_sd REAL,
-          confidence_intervals_min REAL,
-          confidence_intervals_max REAL)`);
+};
+
+const style = StyleSheet.create({
+   textInput: {
+      borderWidth: 2,
+      borderRadius: 15,
+      padding: 10,
+      fontSize: 18,
+      width: width,
+      marginTop: 10,
+      borderColor: "#6D0B21",
+      textAlign: "center",
+   },
+   text: {
+      fontSize: 18,
+      color: "white",
+   },
+   button: {
+      marginTop: 10,
+      backgroundColor: "#8D0B41",
+      flex: 0.2,
+      fontSize: 24,
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: 20,
+   },
+   radioButtons: {
+      marginTop: 10,
+      flexDirection: "row",
+      justifyContent: "space-evenly",
+   },
+   radioButtonContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      alignItems: "center",
+      marginBottom: 10,
+   },
+   radioButton: {
+      height: 20,
+      width: 20,
+      borderRadius: 10,
+      borderWidth: 2,
+      borderColor: "#007BFF",
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 10,
+   },
+   radioButtonSelected: {
+      height: 10,
+      width: 10,
+      borderRadius: 5,
+      backgroundColor: "#007BFF",
+   },
+   radioButtonLabel: {
+      fontSize: 16,
+   },
 });
-tx.executeSql(`CREATE TABLE IF NOT EXIST elements (id INTEGER PRIMARY KEY AUTOINCREMENT,
-       name TEXT UNIQUE NOT NULL)`);
-tx.executeSql(`CREATE TABLE IF NOT EXIST analysis (id INTEGER PRIMARY KEY AUTOINCREMENT,
-       user_id INTEGER,
-       FOREIGN KEY(user_id) REFERENCES elements(id),
-       hospital_name TEXT)`);
-this.dbClose();
+
+export default FormComponent;

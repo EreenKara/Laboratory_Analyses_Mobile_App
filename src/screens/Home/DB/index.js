@@ -24,6 +24,7 @@ const DBScreen = () => {
          <TouchableOpacity
             style={style.button}
             onPress={() => {
+               console.log("basildi");
                mySqlLite.deleteDatabase();
             }}
          >

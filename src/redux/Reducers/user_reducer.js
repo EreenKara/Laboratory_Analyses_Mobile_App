@@ -12,6 +12,8 @@ const userSlice = createSlice({
    reducers: {
       setUser: (state, action) => {
          state.user = action.payload;
+         console.log("state.user");
+         console.log(state.user);
       },
       clearUser: (state) => {
          state.user = null; // Kullanıcıyı temizle

@@ -1,3 +1,9 @@
+/*
+Custom func yazamadığımdan firebase tarafına e-mail check edilip edilmediğini bilmiyorum
+direkt oalrka emial'i kulalnan insana kayıt olma hakkı veriyor olacağız mecbur
+Frontend'de bir doğrulama koyacağım ancak aşılabilir elbette.
+*/
+
 import {
    View,
    Text,
@@ -11,25 +17,44 @@ import React, { useState } from "react";
 import { loginUserSchema } from "myutility/validations";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
+// import mySqlLite from "myutility/sqllite_storage";
+import myfirebase from "myfirebase/myfirebase";
+
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "myredux/Reducers/user_reducer";
 
 const width = Dimensions.get("window").width / 1.4;
 const FormComponent = () => {
    const navigation = useNavigation();
-
+   const dispatch = useDispatch();
    return (
       <Formik
          initialValues={{
             // state tanimlamalari
-            TC: "",
+            email: "",
             password: "",
          }}
-         onSubmit={(values, bag) => {
-            // bag.setErrors();
-            // bag.setFieldError();
-            if (values.TC === "53791548800") {
-               return bag.setErrors({ TC: "Bu TC kullanımda" });
+         onSubmit={async (values, bag) => {
+            try {
+               const user = await myfirebase.signIn(
+                  values.email,
+                  values.password
+               );
+               if (user.emailVerified === false) {
+                  alert("Email'inizi doğrulamadan giriş yapamazsınız!");
+                  return;
+               }
+               alert("Giriş başarılı!");
+               console.log("duzgun giris");
+               console.log("values", { ...values });
+               dispatch(setUser({ email: values.email }));
+               navigation.navigate("UserData");
+            } catch (e) {
+               bag.resetForm();
+               bag.setErrors({ email: "YANLIS giris yapildi " });
+               console.log("hatali giris");
+               return;
             }
-            bag.resetForm();
          }}
          validationSchema={loginUserSchema}
       >
@@ -41,7 +66,6 @@ const FormComponent = () => {
             handleBlur,
             handleSubmit,
             isSubmitting,
-            /* and other goodies */
          }) => (
             <View style={{ flex: 1, width: "100%" }}>
                {errors.TC && touched.TC && (
@@ -49,14 +73,14 @@ const FormComponent = () => {
                )}
                <TextInput
                   style={style.textInput}
-                  placeholder="TC"
-                  keyboardType="numeric"
+                  placeholder="email"
+                  keyboardType="email-address"
                   autoFocus={true}
-                  placeholderTextColor="#929292"
+                  placeholderTextcolor="#929292"
                   clearButtonMode="always"
-                  value={values.TC}
-                  onChangeText={handleChange("TC")}
-                  onBlur={handleBlur("TC")}
+                  value={values.email}
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
                   editable={!isSubmitting}
                />
                {errors.password && touched.password && (

@@ -9,18 +9,17 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import styles from "myutility/styles";
 
-const BoxComponent = ({ order, color, name, toNavigate }) => {
+const BoxComponent = ({ color, name, toNavigate }) => {
    const navigation = useNavigation();
-   const bWidth = (order %= 2 == 0 ? 1 : 2);
    return (
       <TouchableOpacity
          onPress={toNavigate}
          style={[
-            { backgroundColor: color, borderRightWidth: bWidth },
+            { backgroundColor: color, borderRightWidth: 2 },
             style.container,
          ]}
       >
-         <Text style={styles.text.plain}>Bu bir {name} box'tur</Text>
+         <Text style={styles.text.plain}>{name}</Text>
       </TouchableOpacity>
    );
 };

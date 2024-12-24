@@ -11,32 +11,42 @@ import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { registerUserSchema } from "myutility/validations";
 import { Formik } from "formik";
+// import mySqlLite from "myutility/sqllite_storage";
 const width = Dimensions.get("window").width / 1.4;
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "myredux/Reducers/user_reducer";
+import myfirebase from "myfirebase/myfirebase";
 
 const FormComponent = () => {
    const navigation = useNavigation();
-
+   const dispatch = useDispatch();
    const options = ["Kadin", "Erkek"];
 
    return (
       <Formik
          initialValues={{
             // state tanimlamalari
-            name: "",
-            surname: "",
-            gender: "",
-            birth_date: null,
-            TC: "",
+            email: "",
             password: "",
             passwordConfirm: "",
          }}
-         onSubmit={(values, bag) => {
-            // bag.setErrors();
-            // bag.setFieldError();
-            if (values.TC === "53791548800") {
-               return bag.setErrors({ TC: "Bu TC kullanımda" });
+         onSubmit={async (values, bag) => {
+            try {
+               const user = await myfirebase.signUp(
+                  values.email,
+                  values.password
+               );
+               alert("Kayıt başarılı!");
+               console.log("duzgun giris");
+               console.log("values", { ...values });
+               dispatch(setUser(user));
+               navigation.navigate("Login");
+            } catch (e) {
+               bag.resetForm();
+               bag.setErrors({ email: "YANLIS kayit yapildi " });
+               console.log("hatali kayit");
+               return;
             }
-            bag.resetForm();
          }}
          validationSchema={registerUserSchema}
       >
@@ -56,84 +66,15 @@ const FormComponent = () => {
                )}
                <TextInput
                   style={style.textInput}
-                  placeholder="İsim"
+                  placeholder="email"
                   keyboardType="default"
                   autoFocus={true}
-                  value={values.name}
-                  onChangeText={handleChange("name")}
-                  onBlur={handleBlur("name")}
-                  editable={!isSubmitting}
-               />
-               {errors.gender && touched.gender && (
-                  <Text style={style.errorText}>{errors.gender}</Text>
-               )}
-               <View style={style.radioButtons}>
-                  {options.map((option, index) => (
-                     <TouchableOpacity
-                        key={index}
-                        style={style.radioButtonContainer}
-                        onPress={() => {
-                           handleChange("gender")(option);
-                        }}
-                     >
-                        <View
-                           style={
-                              values.gender === option
-                                 ? [
-                                      style.radioButton,
-                                      { backgroundColor: "black" },
-                                   ]
-                                 : style.radioButton
-                           }
-                        >
-                           {values.gender === option && (
-                              <View style={[style.radioButtonSelected]} />
-                           )}
-                        </View>
-                        <Text style={style.radioButtonLabel}>{option}</Text>
-                     </TouchableOpacity>
-                  ))}
-               </View>
-               {errors.surname && touched.surname && (
-                  <Text style={style.errorText}>{errors.surname}</Text>
-               )}
-               <TextInput
-                  style={style.textInput}
-                  placeholder="Soyisim"
-                  keyboardType="default"
-                  value={values.surname}
-                  onChangeText={handleChange("surname")}
-                  onBlur={handleBlur("surname")}
+                  value={values.email}
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
                   editable={!isSubmitting}
                />
 
-               {errors.birth_date && touched.birth_date && (
-                  <Text style={style.errorText}>{errors.birth_date}</Text>
-               )}
-               <TextInput
-                  style={style.textInput}
-                  placeholder="Dogum Tarihi"
-                  keyboardType="default"
-                  placeholderTextColor="#929292"
-                  value={values.birth_date}
-                  onChangeText={handleChange("birth_date")}
-                  onBlur={handleBlur("birth_date")}
-                  editable={!isSubmitting}
-               />
-
-               {errors.TC && touched.TC && (
-                  <Text style={style.errorText}>{errors.TC}</Text>
-               )}
-               <TextInput
-                  style={style.textInput}
-                  placeholder="TC"
-                  keyboardType="numeric"
-                  placeholderTextColor="#929292"
-                  value={values.TC}
-                  onChangeText={handleChange("TC")}
-                  onBlur={handleBlur("TC")}
-                  editable={!isSubmitting}
-               />
                {errors.password && touched.password && (
                   <Text style={style.errorText}>{errors.password}</Text>
                )}
@@ -146,6 +87,9 @@ const FormComponent = () => {
                   onBlur={handleBlur("password")}
                   editable={!isSubmitting}
                />
+               {errors.passwordConfirm && touched.passwordConfirm && (
+                  <Text style={style.errorText}>{errors.passwordConfirm}</Text>
+               )}
                <TextInput
                   style={style.textInput}
                   placeholder="Sifre Dogrulama"
@@ -155,6 +99,7 @@ const FormComponent = () => {
                   onBlur={handleBlur("passwordConfirm")}
                   editable={!isSubmitting}
                />
+
                <TouchableOpacity
                   style={style.button}
                   onPress={handleSubmit}

@@ -5,7 +5,7 @@ import userReducer from "./Reducers/user_reducer"; // Reducer'larınızı buraya
 const store = configureStore({
    reducer: {
       // Reducer'ları burada belirtiyoruz
-      user: userReducer,
+      userReducer: userReducer,
    },
 });
 export default store;

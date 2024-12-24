@@ -33,7 +33,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { GenelTabNavigator } from "mynavigations/tabNavigator";
 import { GenelDrawerNavigator } from "mynavigations/drawerNavigator";
 import { GenelStackNavigator } from "mynavigations/stackNavigator";
-import { Provider } from "react-native-paper";
+import { Provider } from "react-redux";
 import mySqlLite from "myutility/sqllite_storage";
 import LoadingComponent from "myshared/loading";
 import store from "myredux/store";

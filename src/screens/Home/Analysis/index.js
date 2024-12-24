@@ -1,12 +1,13 @@
 import { Button } from "@react-navigation/elements";
 import * as React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import TahlilComponent from "./tahlil";
 
 function AnalysisScreen({ navigation }) {
    return (
-      <View>
-         <Text>Analysiss Page'e HosGeldiniz.</Text>
-         <Button title="Tikla" onPress={() => navigation.navigate("Home")} />
+      <View style={styles.container}>
+         <Text>Analysis</Text>
+         <View style={styles.tahliller}>{/* <TahlilComponent /> */}</View>
       </View>
    );
 }
@@ -14,8 +15,12 @@ function AnalysisScreen({ navigation }) {
 export default AnalysisScreen;
 
 const styles = StyleSheet.create({
-   view_style: {
-      backgroundColor: "black",
+   container: {
       flex: 1,
+   },
+   tahliller: {
+      flex: 1,
+      flexDirection: "column",
+      alignItems: "center",
    },
 });
