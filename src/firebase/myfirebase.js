@@ -5,7 +5,10 @@ import {
    addDoc,
    query,
    where,
+   doc,
    getDocs,
+   getDoc,
+   setDoc,
    Timestamp,
 } from "firebase/firestore";
 import {
@@ -13,6 +16,7 @@ import {
    createUserWithEmailAndPassword,
    signInWithEmailAndPassword,
 } from "firebase/auth";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 const signIn = async (email, password) => {
    try {
       console.log("email", email);
@@ -42,12 +46,12 @@ const signUp = async (email, password) => {
       console.log("Kullanıcı kayıt yaptı:", user);
       alert("email'e verification maili gönderildi!");
       await sendEmailVerification(user);
-      const dbUser = getUserByEmailAsDoc(email);
-      if (dbUser !== null) {
-         await setDoc(dbUser.ref, {
-            role: "role1", // Örneğin 'user', 'doctor', 'admin'
-         });
-      }
+      // const dbUser = getUserByEmailAsDoc(email);
+      // if (dbUser !== null) {
+      //    await setDoc(dbUser.ref, {
+      //       role: "role1", // Örneğin 'user', 'doctor', 'admin'
+      //    });
+      // }
       return user;
    } catch (error) {
       console.error("kayit hatası:", error.message);
@@ -63,7 +67,8 @@ const addUser = async (user) => {
          TC: user.TC,
          gender: user.gender,
          birth_date: user.birth_date,
-         role_id: "role1",
+         email: auth.currentUser.email,
+         // role_id: "role1",
       });
 
       console.log("Document written with ID: ", docRef.id);
@@ -89,7 +94,7 @@ const getUserByEmailAsDoc = async (email) => {
    }
 };
 
-const addAnalysis = async (analysis) => {
+const addAnalysis = async (analysis, inputs) => {
    try {
       const docRef = await addDoc(collection(db, "analysis"), {
          hospital_name: analysis.hospital_name,
@@ -104,11 +109,98 @@ const addAnalysis = async (analysis) => {
             analysis.uzman_onay_kabul_zamani
          ),
       });
-      console.log("Document written with ID: ", docRef.id);
+
+      const analysis_elements_Collection = collection(db, "analysis_elements");
+      console.log("elements ", inputs);
+      console.log("docRef ", docRef.id);
+      for (const input of inputs) {
+         const docRefAEC = await addDoc(analysis_elements_Collection, {
+            analysis_id: docRef.id,
+            element_id: input.element_id,
+            value: input.value,
+         });
+      }
       return docRef;
    } catch (e) {
       console.error("Error adding document: ", e);
       throw e;
+   }
+};
+
+const getGuides = async () => {
+   try {
+      const dizi = [];
+      const querySnapshot = await getDocs(collection(db, "guides"));
+      querySnapshot.forEach((doc) => {
+         dizi.push(doc.data());
+      });
+      return dizi;
+   } catch (error) {
+      console.error("Error getting documents: ", error);
+      throw error;
+   }
+};
+const getGuidesByAge = async (age) => {
+   // burada direkt age veremezsin. Bütün hepsin
+   try {
+      const dizi = [];
+      const querySnapshot = await getDocs(collection(db, "guides"));
+      querySnapshot.forEach((doc) => {
+         dizi.push(doc.data());
+      });
+      return dizi;
+   } catch (error) {
+      console.error("Error getting documents: ", error);
+      throw error;
+   }
+};
+const getGuidesByElement = async (element_id) => {
+   // burada direkt age veremezsin. Bütün hepsin
+   try {
+      const dizi = [];
+      const querySnapshot = await getDocs(collection(db, "guides"));
+      querySnapshot.forEach((doc) => {
+         dizi.push(doc.data());
+      });
+      return dizi;
+   } catch (error) {
+      console.error("Error getting documents: ", error);
+      throw error;
+   }
+};
+const getRoles = async () => {
+   try {
+      const dizi = [];
+      const querySnapshot = await getDocs(collection(db, "roles"));
+      querySnapshot.forEach((doc) => {
+         dizi.push({
+            id: doc.id,
+            role_name: doc.data().role_name,
+         });
+         console.log(doc.id, " => ", doc.data()); // Her document'in ID'sini ve verisini alıyoruz
+      });
+      return dizi;
+   } catch (error) {
+      console.error("Error getting documents: ", error);
+      throw error;
+   }
+};
+
+const getElements = async () => {
+   try {
+      const dizi = [];
+      const querySnapshot = await getDocs(collection(db, "elements"));
+      querySnapshot.forEach((doc) => {
+         dizi.push({
+            id: doc.id,
+            name: doc.data().name,
+         });
+      });
+      console.log("element id", dizi[0].id);
+      return dizi;
+   } catch (error) {
+      console.error("Error getting documents: ", error);
+      throw error;
    }
 };
 
@@ -121,9 +213,7 @@ const getUsers = async () => {
             id: doc.id,
             email: doc.data().email,
          });
-         console.log(doc.id, " => ", doc.data()); // Her document'in ID'sini ve verisini alıyoruz
       });
-      console.log("auth curren user", " => ", auth.currentUser.email); // Her document'in ID'sini ve verisini alıyoruz
       return dizi;
    } catch (error) {
       console.error("Error getting documents: ", error);
@@ -131,12 +221,66 @@ const getUsers = async () => {
    }
 };
 
+const getUserRoleByEmail = async (email) => {
+   try {
+      const userEmail = email;
+      if (!userEmail) {
+         throw new Error("User not authenticated.");
+      }
+      // users_roles koleksiyonundaki document ID'si ile e-posta eşleştiği için
+      const docRef = doc(db, "users_roles", userEmail); // Doc ID = userEmail
+
+      // Belirtilen document'i almak için getDoc kullanıyoruz
+      const docSnapshot = await getDoc(docRef);
+
+      if (!docSnapshot.exists()) {
+         console.log("No matching document found.");
+         return null;
+      }
+      return docSnapshot.data().role_id;
+   } catch (error) {
+      throw error;
+   }
+};
+
+const addGuide = async (guide) => {
+   try {
+      const docRef = await addDoc(collection(db, "guides"), {
+         max_age: guide.max_age,
+         min_age: guide.min_age,
+         age_format: guide.age_format,
+         subject_number: guide.subject_number,
+         min_value: guide.min_value,
+         max_value: guide.max_value,
+         mean_value: guide.mean_value,
+         mean_value_sd: guide.mean_value_sd,
+         geometric_mean: guide.geometric_mean,
+         geometric_mean_sd: guide.geometric_mean_sd,
+         confidence_intervals_min: guide.confidence_intervals_min,
+         confidence_intervals_max: guide.confidence_intervals_max,
+         element_id: guide.element_id,
+      });
+      console.log("Document written with ID: ", docRef.id);
+      return docRef;
+   } catch (e) {
+      console.error("Error adding document: ", e);
+      throw e;
+   }
+};
+
 const myfirebase = {
    addUser: addUser,
    signIn: signIn,
    signUp: signUp,
+   getUserByEmailAsDoc: getUserByEmailAsDoc,
    addAnalysis: addAnalysis,
    getUsers: getUsers,
+   getRoles: getRoles,
+   getElements: getElements,
+   getGuides: getGuides,
+   addGuide: addGuide,
+   getGuidesByElement: getGuidesByElement,
+   getUserRoleByEmail: getUserRoleByEmail,
 };
 
 export default myfirebase;

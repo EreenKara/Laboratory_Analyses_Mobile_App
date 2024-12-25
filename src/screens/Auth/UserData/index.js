@@ -23,24 +23,24 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 const UserDataScreen = () => {
    const navigation = useNavigation();
    const [show_birth_date, set_show_birth_date] = useState(false);
-   const [loading, setLoading] = useState(false);
+   const [loading, setLoading] = useState(true);
    const dispatch = useDispatch();
    const options = ["Kadin", "Erkek"];
-
+   const email = useSelector((state) => state.userReducer.user.email);
    useEffect(() => {
       const fetchData = async () => {
          try {
-            const user = await myfirebase.get(values.email, values.password);
-            alert("Kayıt başarılı!");
-            console.log("duzgun giris");
-            console.log("values", { ...values });
-            dispatch(setUser(user));
-            navigation.navigate("Login");
+            const user = await myfirebase.getUserByEmailAsDoc(email);
+            if (user === null) {
+               setLoading(false);
+            } else {
+               navigation.navigate("Home");
+            }
          } catch (e) {
             bag.resetForm();
-            bag.setErrors({ email: "YANLIS kayit yapildi " });
-            console.log("hatali kayit");
+            console.log("Kullanci bilgi girisinde hata.");
             return;
+         } finally {
          }
       };
       fetchData();
@@ -59,11 +59,13 @@ const UserDataScreen = () => {
             }}
             onSubmit={async (values, bag) => {
                try {
-                  const user = await mySqlLite.addUser(values);
+                  const user = await myfirebase.addUser(values);
 
                   if (user === null) {
                      bag.resetForm();
-                     console.log("bilgi girisi sirasinda hata olustu");
+                     console.log(
+                        "bilgi girisini gonderirken hata olustu. Tekrar deneyiniz."
+                     );
                      alert("hata olustu");
                      return;
                   }
@@ -86,6 +88,7 @@ const UserDataScreen = () => {
                handleBlur,
                handleSubmit,
                isSubmitting,
+               setFieldValue,
                /* and other goodies */
             }) => (
                <SafeAreaView style={style.container}>

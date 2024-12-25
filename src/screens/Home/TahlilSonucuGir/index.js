@@ -18,6 +18,7 @@ import myfirebase from "myfirebase/myfirebase";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "myredux/Reducers/user_reducer";
 import { Picker } from "@react-native-picker/picker";
+import { auth } from "myfirebase/firebaseconfig"; // Realtime Database referansı
 import LoadingComponent from "myshared/loading";
 
 const width = Dimensions.get("window").width / 1.4;
@@ -26,6 +27,7 @@ const TahlilSonucuGirScreen = () => {
    const navigation = useNavigation();
    const [loading, setLoading] = useState(true);
    const [doctor, setDoctor] = useState(null);
+   const [elements, setElements] = useState([]);
    const [show_numune_alma_zamani, set_show_numune_alma_zamani] =
       useState(false);
    const [show_numune_kabul_zamani, set_show_numune_kabul_zamani] =
@@ -36,13 +38,35 @@ const TahlilSonucuGirScreen = () => {
       useState(false);
 
    const [users, setUsers] = useState([]);
+   const [inputs, setInputs] = useState([{ id: 1, element_id: "", value: "" }]);
+   const addInputField = () => {
+      const newInput = { id: inputs.length + 1, element_id: "", value: "" };
+      setInputs([...inputs, newInput]);
+   };
+   const handleInputChange = (field, value, id) => {
+      setInputs(
+         inputs.map((input) =>
+            input.id === id ? { ...input, [field]: value } : input
+         )
+      );
+   };
    useEffect(() => {
       const fetchUsers = async () => {
          try {
             const usersData = await myfirebase.getUsers();
             setUsers(usersData);
-            const docRef = await getUserByEmailAsDoc(auth.currentUser.email);
-            // setDoctor({ id: docRef.id, email: docRef.data().email });
+            console.log("users", "deneme1");
+
+            const elementsData = await myfirebase.getElements();
+            setElements(elementsData);
+            console.log("elements", "deneme2");
+            const docRef = await myfirebase.getUserByEmailAsDoc(
+               auth.currentUser.email
+            );
+            const docData = docRef.data();
+            setDoctor({ id: docRef.id, email: docData.email });
+            console.log("docData", docData);
+            console.log("doctor", doctor);
             setLoading(false);
          } catch (error) {
             alert("Kullanıcılar getirilirken hata oluştu");
@@ -58,7 +82,7 @@ const TahlilSonucuGirScreen = () => {
             initialValues={{
                // state tanimlamalari
                hospital_name: "Eren Hastanesi",
-               doctor_id: doctor.id,
+               doctor_id: "",
                numune_alma_zamani: new Date(),
                numune_kabul_zamani: new Date(),
                numune_turu: "",
@@ -69,7 +93,7 @@ const TahlilSonucuGirScreen = () => {
             }}
             onSubmit={async (values, bag) => {
                try {
-                  const docRef = await myfirebase.addAnalysis(values);
+                  const docRef = await myfirebase.addAnalysis(values, inputs);
                   alert("Tahlil sonucu başarıyla girildi");
                } catch (e) {
                   alert("Tahlil sonucu girilirken hata oluştu");
@@ -77,9 +101,9 @@ const TahlilSonucuGirScreen = () => {
                } finally {
                   bag.setSubmitting(false);
                   bag.resetForm();
+                  setInputs([{ id: 1, element_id: "", value: "" }]);
                }
             }}
-            validationSchema={analysisSchema}
          >
             {({
                values,
@@ -108,16 +132,7 @@ const TahlilSonucuGirScreen = () => {
                         onBlur={handleBlur("hospital_name")}
                         editable={!isSubmitting}
                      />
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="doctor_id"
-                        keyboardType="default"
-                        autoFocus={true}
-                        value={values.doctor_id}
-                        onChangeText={handleChange("doctor_id")}
-                        onBlur={handleBlur("doctor_id")}
-                        editable={false}
-                     />
+                     <Text style={style.text}>Doktor: {doctor.email}</Text>
                      <Text style={style.errorText}>
                         Eğerki kullanici burada yoksa lutfen ilk once kullaniyi
                         ekleyin
@@ -135,16 +150,6 @@ const TahlilSonucuGirScreen = () => {
                            />
                         ))}
                      </Picker>
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="user_id"
-                        keyboardType="default"
-                        autoFocus={true}
-                        value={values.user_id}
-                        onChangeText={handleChange("user_id")}
-                        onBlur={handleBlur("user_id")}
-                        editable={!isSubmitting}
-                     />
                      <TextInput
                         style={style.textInput}
                         placeholder="numune_turu"
@@ -231,7 +236,7 @@ const TahlilSonucuGirScreen = () => {
                            onChange={(event, selectedDate) => {
                               set_show_numune_kabul_zamani(false);
                               setFieldValue(
-                                 "numune_alma_zamani",
+                                 "numune_kabul_zamani",
                                  selectedDate || values.numune_kabul_zamani
                               );
                            }}
@@ -255,7 +260,7 @@ const TahlilSonucuGirScreen = () => {
                            onChange={(event, selectedDate) => {
                               set_show_tetkik_istek_zamani(false);
                               setFieldValue(
-                                 "numune_alma_zamani",
+                                 "tetkik_istek_zamani",
                                  selectedDate || values.tetkik_istek_zamani
                               );
                            }}
@@ -263,6 +268,41 @@ const TahlilSonucuGirScreen = () => {
                            editable={!isSubmitting}
                         />
                      )}
+
+                     <View>
+                        {inputs.map((input) => (
+                           <View key={input.id} style={style.inputContainer}>
+                              <Picker
+                                 style={style.pickerStyle}
+                                 selectedValue={input.element_id}
+                                 onValueChange={(itemValue) =>
+                                    handleInputChange(
+                                       "element_id",
+                                       itemValue,
+                                       input.id
+                                    )
+                                 }
+                              >
+                                 {elements.map((element) => (
+                                    <Picker.Item
+                                       key={element.id}
+                                       label={element.name}
+                                       value={element.id}
+                                    />
+                                 ))}
+                              </Picker>
+                              <TextInput
+                                 style={style.input}
+                                 placeholder={`Input ${input.id}`}
+                                 value={input.value}
+                                 onChangeText={(value) =>
+                                    handleInputChange("value", value, input.id)
+                                 }
+                              />
+                           </View>
+                        ))}
+                        <Button title="Add Input" onPress={addInputField} />
+                     </View>
 
                      <TouchableOpacity
                         style={style.button}
@@ -302,8 +342,9 @@ const style = StyleSheet.create({
       textAlign: "center",
    },
    text: {
-      fontSize: 18,
-      color: "white",
+      fontSize: 16,
+      color: "black",
+      margin: 5,
    },
    button: {
       marginTop: 10,

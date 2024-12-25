@@ -46,7 +46,8 @@ export default function App() {
       setIsLoading(false);
    };
    useEffect(() => {
-      preparations();
+      // preparations();
+      setIsLoading(false);
    }, []);
    return isLoading ? (
       <LoadingComponent />

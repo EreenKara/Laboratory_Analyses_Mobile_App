@@ -17,7 +17,8 @@ import NavBarLeft from "myshared/navbar_left";
 import NavBarLang from "myshared/navbar_lang";
 import DBScreen from "myscreens/Home/DB";
 import KlavuzGirScreen from "myscreens/Home/KlavuzGir/index";
-import KlavuzGetirScreen from "myscreens/Home/KlavuzGetir/index";
+import KlavuzlardaAraScreen from "myscreens/Home/KlavuzlardaAra/index";
+import KlavuzSonucuScreen from "myscreens/Home/KlavuzlardaAra/KlavuzSonucu";
 import HastaninTahliliniGoruntuleScreen from "myscreens/Home/HastaninTahliliniGoruntule/index";
 import TahlilSonucuGirScreen from "../screens/Home/TahlilSonucuGir";
 import UserDataScreen from "myscreens/Auth/UserData/index";
@@ -107,10 +108,17 @@ const HomeStackNavigator = () => {
             })}
          />
          <HomeStack.Screen
-            name="KlavuzGetir"
-            component={KlavuzGetirScreen}
+            name="KlavuzlardaAra"
+            component={KlavuzlardaAraScreen}
             options={() => ({
-               title: "KlavuzGetir",
+               title: "KlavuzlardaAra",
+            })}
+         />
+         <HomeStack.Screen
+            name="KlavuzSonucuScreen"
+            component={KlavuzSonucuScreen}
+            options={() => ({
+               title: "KlavuzSonucuScreen",
             })}
          />
          <HomeStack.Screen

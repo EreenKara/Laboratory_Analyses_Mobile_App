@@ -28,10 +28,11 @@ const RoleScreen = () => {
             setUsers(usersData);
             const docRef = await getUserByEmailAsDoc(auth.currentUser.email);
             // setDoctor({ id: docRef.id, email: docRef.data().email });
-            setLoading(false);
          } catch (error) {
             alert("Kullanıcılar getirilirken hata oluştu");
             navigation.navigate("Home");
+         } finally {
+            setLoading(false);
          }
       };
       fetchUsers();

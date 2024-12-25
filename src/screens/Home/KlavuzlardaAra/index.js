@@ -19,6 +19,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "myredux/Reducers/user_reducer";
 import { Picker } from "@react-native-picker/picker";
 import LoadingComponent from "myshared/loading";
+import { format } from "crypto-js";
 const width = Dimensions.get("window").width / 1.4;
 
 const ageFormats = [
@@ -33,11 +34,10 @@ const ageFormats = [
    { id: 2, format: "Year" },
 ];
 
-const KlavuzGirScreen = () => {
+const KlavuzlardaAraScreen = () => {
    const navigation = useNavigation();
    const [loading, setLoading] = useState(true);
    const [elements, setElements] = useState([]);
-
    useEffect(() => {
       const fetchElements = async () => {
          try {
@@ -61,32 +61,23 @@ const KlavuzGirScreen = () => {
          <Formik
             initialValues={{
                // state tanimlamalari
-               max_age: 0,
-               min_age: 0,
+               age: 0,
                age_format: "",
-               subject_number: 0,
-               min_value: 0,
-               max_value: 0,
-               mean_value: 0,
-               mean_value_sd: 0,
-               geometric_mean: 0,
-               geometric_mean_sd: 0,
-               confidence_intervals_min: 0,
-               confidence_intervals_max: 0,
                element_id: "",
             }}
             onSubmit={async (values, bag) => {
                try {
-                  const docRef = await myfirebase.addGuide(values);
-                  alert("Tahlil sonucu başarıyla girildi");
+                  navigation.navigate("KlavuzSonucuScreen", values);
+                  alert("klavuzda arama gerceklestirilecek");
                } catch (e) {
-                  alert("Tahlil sonucu girilirken hata oluştu");
+                  alert("Klavuzda arama sırasında hata");
                   console.log(e);
                } finally {
                   bag.setSubmitting(false);
                   bag.resetForm();
                }
             }}
+            validationSchema={analysisSchema}
          >
             {({
                values,
@@ -99,29 +90,20 @@ const KlavuzGirScreen = () => {
             }) => (
                <View style={style.container}>
                   <ScrollView contentContainerStyle={[style.containerScroll]}>
-                     {errors.min_age && touched.min_age && (
-                        <Text style={style.errorText}>{errors.min_age}</Text>
+                     {errors.age && touched.age && (
+                        <Text style={style.errorText}>{errors.age}</Text>
                      )}
                      <TextInput
                         style={style.textInput}
-                        placeholder="min_age"
+                        placeholder="age"
                         keyboardType="numeric"
                         autoFocus={true}
-                        value={values.min_age}
-                        onChangeText={handleChange("min_age")}
-                        onBlur={handleBlur("min_age")}
+                        value={values.age}
+                        onChangeText={handleChange("age")}
+                        onBlur={handleBlur("age")}
                         editable={!isSubmitting}
                      />
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="max_age"
-                        keyboardType="numeric"
-                        autoFocus={true}
-                        value={values.max_age}
-                        onChangeText={handleChange("max_age")}
-                        onBlur={handleBlur("max_age")}
-                        editable={!isSubmitting}
-                     />
+
                      {/* age format gelcek uraya */}
                      <Picker
                         style={style.pickerStyle}
@@ -136,96 +118,7 @@ const KlavuzGirScreen = () => {
                            />
                         ))}
                      </Picker>
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="subject_number"
-                        keyboardType="numeric"
-                        autoFocus={true}
-                        value={values.subject_number}
-                        onChangeText={handleChange("subject_number")}
-                        onBlur={handleBlur("subject_number")}
-                        editable={!isSubmitting}
-                     />
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="min_value"
-                        keyboardType="numeric"
-                        autoFocus={true}
-                        value={values.min_value}
-                        onChangeText={handleChange("min_value")}
-                        onBlur={handleBlur("min_value")}
-                        editable={!isSubmitting}
-                     />
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="max_value"
-                        keyboardType="numeric"
-                        autoFocus={true}
-                        value={values.max_value}
-                        onChangeText={handleChange("max_value")}
-                        onBlur={handleBlur("max_value")}
-                        editable={!isSubmitting}
-                     />
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="mean_value"
-                        keyboardType="numeric"
-                        autoFocus={true}
-                        value={values.mean_value}
-                        onChangeText={handleChange("mean_value")}
-                        onBlur={handleBlur("mean_value")}
-                        editable={!isSubmitting}
-                     />
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="mean_value_sd"
-                        keyboardType="numeric"
-                        autoFocus={true}
-                        value={values.mean_value_sd}
-                        onChangeText={handleChange("mean_value_sd")}
-                        onBlur={handleBlur("mean_value_sd")}
-                        editable={!isSubmitting}
-                     />
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="geometric_mean"
-                        keyboardType="numeric"
-                        autoFocus={true}
-                        value={values.geometric_mean}
-                        onChangeText={handleChange("geometric_mean")}
-                        onBlur={handleBlur("geometric_mean")}
-                        editable={!isSubmitting}
-                     />
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="geometric_mean_sd"
-                        keyboardType="numeric"
-                        autoFocus={true}
-                        value={values.geometric_mean_sd}
-                        onChangeText={handleChange("geometric_mean_sd")}
-                        onBlur={handleBlur("geometric_mean_sd")}
-                        editable={!isSubmitting}
-                     />
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="confidence_intervals_min"
-                        keyboardType="numeric"
-                        autoFocus={true}
-                        value={values.confidence_intervals_min}
-                        onChangeText={handleChange("confidence_intervals_min")}
-                        onBlur={handleBlur("confidence_intervals_min")}
-                        editable={!isSubmitting}
-                     />
-                     <TextInput
-                        style={style.textInput}
-                        placeholder="confidence_intervals_max"
-                        keyboardType="numeric"
-                        autoFocus={true}
-                        value={values.confidence_intervals_max}
-                        onChangeText={handleChange("confidence_intervals_max")}
-                        onBlur={handleBlur("confidence_intervals_max")}
-                        editable={!isSubmitting}
-                     />
+                     {/* element id gelcek uraya */}
                      <Picker
                         style={style.pickerStyle}
                         selectedValue={values.element_id}
@@ -255,7 +148,7 @@ const KlavuzGirScreen = () => {
    );
 };
 
-export default KlavuzGirScreen;
+export default KlavuzlardaAraScreen;
 
 const style = StyleSheet.create({
    container: {
@@ -275,7 +168,7 @@ const style = StyleSheet.create({
       padding: 10,
       fontSize: 18,
       width: width,
-      marginTop: 15,
+      marginTop: 10,
       borderColor: "#6D0B21",
       textAlign: "center",
    },
@@ -330,7 +223,7 @@ const style = StyleSheet.create({
       fontSize: 16,
    },
    pickerStyle: {
-      height: 60,
+      height: 50,
       width: width,
       borderColor: "#6D0B21",
       borderWidth: 10,
