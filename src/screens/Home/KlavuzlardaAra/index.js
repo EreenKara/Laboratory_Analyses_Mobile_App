@@ -20,7 +20,6 @@ import { setUser } from "myredux/Reducers/user_reducer";
 import { Picker } from "@react-native-picker/picker";
 import LoadingComponent from "myshared/loading";
 import { format } from "crypto-js";
-const width = Dimensions.get("window").width / 1.4;
 
 const ageFormats = [
    {
@@ -62,8 +61,8 @@ const KlavuzlardaAraScreen = () => {
             initialValues={{
                // state tanimlamalari
                age: 0,
-               age_format: "",
-               element_id: "",
+               age_format: "Day",
+               element_id: "IgA",
             }}
             onSubmit={async (values, bag) => {
                try {
@@ -158,7 +157,7 @@ const style = StyleSheet.create({
       padding: 20,
    },
    containerScroll: {
-      width: width,
+      width: 320,
       flexDirection: "column",
       alignItems: "center",
    },
@@ -167,7 +166,7 @@ const style = StyleSheet.create({
       borderRadius: 15,
       padding: 10,
       fontSize: 18,
-      width: width,
+      width: 320,
       marginTop: 10,
       borderColor: "#6D0B21",
       textAlign: "center",
@@ -223,14 +222,14 @@ const style = StyleSheet.create({
       fontSize: 16,
    },
    pickerStyle: {
-      height: 50,
-      width: width,
-      borderColor: "#6D0B21",
+      height: 60,
+      width: 320,
+      borderColor: "#fff",
       borderWidth: 10,
       color: "#344953",
    },
    dateStyle: {
       marginTop: 10,
-      width: width,
+      width: 500,
    },
 });

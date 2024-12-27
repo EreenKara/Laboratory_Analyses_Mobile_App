@@ -19,7 +19,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "myredux/Reducers/user_reducer";
 import { Picker } from "@react-native-picker/picker";
 import LoadingComponent from "myshared/loading";
-const width = Dimensions.get("window").width / 1.4;
 
 const ageFormats = [
    {
@@ -63,7 +62,7 @@ const KlavuzGirScreen = () => {
                // state tanimlamalari
                max_age: 0,
                min_age: 0,
-               age_format: "",
+               age_format: "Day",
                subject_number: 0,
                min_value: 0,
                max_value: 0,
@@ -73,7 +72,7 @@ const KlavuzGirScreen = () => {
                geometric_mean_sd: 0,
                confidence_intervals_min: 0,
                confidence_intervals_max: 0,
-               element_id: "",
+               element_id: "IgA",
             }}
             onSubmit={async (values, bag) => {
                try {
@@ -257,6 +256,7 @@ const KlavuzGirScreen = () => {
 
 export default KlavuzGirScreen;
 
+const width = 320;
 const style = StyleSheet.create({
    container: {
       width: "100%",
@@ -265,7 +265,7 @@ const style = StyleSheet.create({
       padding: 20,
    },
    containerScroll: {
-      width: width,
+      width: width + 15,
       flexDirection: "column",
       alignItems: "center",
    },

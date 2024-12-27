@@ -150,7 +150,7 @@ const style = StyleSheet.create({
       borderRadius: 15,
       padding: 10,
       fontSize: 18,
-      width: 500,
+      width: 320,
       marginTop: 10,
       borderColor: "#6D0B21",
       textAlign: "center",

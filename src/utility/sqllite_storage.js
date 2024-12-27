@@ -92,7 +92,7 @@ const seedData = () => {
 
       db.runSync(
          "INSERT INTO users (name,surname,password,TC,gender,birth_date,role_id) VALUES (?,?,?,?,?,?,?)",
-         ["Eren", "Kara", "eren123A.", "53791548800", "Erkek", "2001-11-06", 3]
+         ["Eren", "Kara", "e2k213,T", "12345678901", "Erkek", "2001-11-06", 3]
       );
    } else {
       console.log("users tablosunda zaten veri var.");

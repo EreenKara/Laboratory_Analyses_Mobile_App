@@ -12,7 +12,6 @@ import { useNavigation } from "@react-navigation/native";
 import { registerUserSchema } from "myutility/validations";
 import { Formik } from "formik";
 // import mySqlLite from "myutility/sqllite_storage";
-const width = Dimensions.get("window").width / 1.4;
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "myredux/Reducers/user_reducer";
 import myfirebase from "myfirebase/myfirebase";
@@ -136,6 +135,7 @@ const FormComponent = () => {
    );
 };
 
+const width = 320;
 const style = StyleSheet.create({
    textInput: {
       borderWidth: 2,
@@ -154,7 +154,7 @@ const style = StyleSheet.create({
    button: {
       marginTop: 10,
       backgroundColor: "#8D0B41",
-      flex: 0.2,
+      flex: 0.1,
       fontSize: 24,
       justifyContent: "center",
       alignItems: "center",

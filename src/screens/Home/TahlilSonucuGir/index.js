@@ -21,8 +21,6 @@ import { Picker } from "@react-native-picker/picker";
 import { auth } from "myfirebase/firebaseconfig"; // Realtime Database referansı
 import LoadingComponent from "myshared/loading";
 
-const width = Dimensions.get("window").width / 1.4;
-
 const TahlilSonucuGirScreen = () => {
    const navigation = useNavigation();
    const [loading, setLoading] = useState(true);
@@ -40,7 +38,7 @@ const TahlilSonucuGirScreen = () => {
    const [users, setUsers] = useState([]);
    const [inputs, setInputs] = useState([{ id: 1, element_id: "", value: "" }]);
    const addInputField = () => {
-      const newInput = { id: inputs.length + 1, element_id: "", value: "" };
+      const newInput = { id: inputs.length + 1, element_id: "IgA", value: "" };
       setInputs([...inputs, newInput]);
    };
    const handleInputChange = (field, value, id) => {
@@ -67,6 +65,7 @@ const TahlilSonucuGirScreen = () => {
             setDoctor({ id: docRef.id, email: docData.email });
             console.log("docData", docData);
             console.log("doctor", doctor);
+            handleInputChange("element_id", "IgA", 1);
             setLoading(false);
          } catch (error) {
             alert("Kullanıcılar getirilirken hata oluştu");
@@ -82,13 +81,13 @@ const TahlilSonucuGirScreen = () => {
             initialValues={{
                // state tanimlamalari
                hospital_name: "Eren Hastanesi",
-               doctor_id: "",
+               doctor_id: doctor.id,
                numune_alma_zamani: new Date(),
                numune_kabul_zamani: new Date(),
                numune_turu: "",
                rapor_grubu: "",
                tetkik_istek_zamani: new Date(),
-               user_id: "",
+               user_id: users[0].id,
                uzman_onay_kabul_zamani: new Date(),
             }}
             onSubmit={async (values, bag) => {
@@ -318,6 +317,7 @@ const TahlilSonucuGirScreen = () => {
       ))
    );
 };
+const width = 320;
 
 const style = StyleSheet.create({
    container: {
@@ -327,7 +327,7 @@ const style = StyleSheet.create({
       padding: 20,
    },
    containerScroll: {
-      width: width,
+      width: width + 15,
       flexDirection: "column",
       alignItems: "center",
    },
@@ -348,6 +348,7 @@ const style = StyleSheet.create({
    },
    button: {
       marginTop: 10,
+      borderRadius: 20,
       backgroundColor: "#8D0B41",
       flex: 0.2,
       height: 30,
@@ -355,7 +356,6 @@ const style = StyleSheet.create({
       fontSize: 20,
       justifyContent: "center",
       alignItems: "center",
-      borderRadius: 20,
    },
    radioButtons: {
       marginTop: 10,

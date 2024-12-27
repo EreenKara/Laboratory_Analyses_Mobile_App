@@ -15,7 +15,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import NavBarTitle from "myshared/navbar_title";
 import NavBarLeft from "myshared/navbar_left";
 import NavBarLang from "myshared/navbar_lang";
-import DBScreen from "myscreens/Home/DB";
 import KlavuzGirScreen from "myscreens/Home/KlavuzGir/index";
 import KlavuzlardaAraScreen from "myscreens/Home/KlavuzlardaAra/index";
 import KlavuzSonucuScreen from "myscreens/Home/KlavuzlardaAra/KlavuzSonucu";
@@ -87,13 +86,7 @@ const HomeStackNavigator = () => {
                title: "Analysis",
             })}
          />
-         <HomeStack.Screen
-            name="DB"
-            component={DBScreen}
-            options={() => ({
-               title: "DB",
-            })}
-         />
+
          <HomeStack.Screen
             name="TahlilSonucuGir"
             component={TahlilSonucuGirScreen}

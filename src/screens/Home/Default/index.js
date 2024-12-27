@@ -1,5 +1,12 @@
 import * as React from "react";
-import { View, Text, StyleSheet, Button, SafeAreaView } from "react-native";
+import {
+   View,
+   Text,
+   StyleSheet,
+   Button,
+   SafeAreaView,
+   ScrollView,
+} from "react-native";
 import BoxList from "./box_list";
 import { SECRET_KEY } from "@env";
 import BoxComponent from "./box";
@@ -43,11 +50,6 @@ function HomeScreen({ navigation }) {
                         name="Tahlil Sonuçlarını Görüntüle"
                         toNavigate={() => navigation.navigate("Analysis")}
                      />
-                     <BoxComponent
-                        color="#D91656"
-                        name="DB"
-                        toNavigate={() => navigation.navigate("DB")}
-                     />
                   </View>
                </View>
                {(role === "role2" || role === "role3") && (
@@ -80,7 +82,9 @@ function HomeScreen({ navigation }) {
                         <BoxComponent
                            color="#E1FFBB"
                            name="Klavuz Getir"
-                           toNavigate={() => navigation.navigate("KlavuzGetir")}
+                           toNavigate={() =>
+                              navigation.navigate("KlavuzlardaAra")
+                           }
                         />
                      </View>
                   </View>
@@ -88,13 +92,13 @@ function HomeScreen({ navigation }) {
                {role === "role3" && (
                   <View>
                      <Text
-                        style={[style.header, { backgroundColor: "#CDC1FF" }]}
+                        style={[style.header, { backgroundColor: "#8EB486" }]}
                      >
                         Admin
                      </Text>
-                     <View style={style.doctorBoxes}>
+                     <View style={style.adminBoxes}>
                         <BoxComponent
-                           color="#0A97B0"
+                           color="#FCFFC1"
                            name="RoleDegistir"
                            toNavigate={() =>
                               navigation.navigate("RoleDegistir")
@@ -124,11 +128,18 @@ const style = StyleSheet.create({
    },
    hastaBoxes: {
       flexDirection: "row",
+      backgroundColor: "#074799",
       flexWrap: "wrap",
    },
    doctorBoxes: {
       flexDirection: "row",
       flexWrap: "wrap",
+      backgroundColor: "#118B50",
+   },
+   adminBoxes: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      backgroundColor: "#79D7BE",
    },
    denemeBoxes: {
       flexDirection: "row",

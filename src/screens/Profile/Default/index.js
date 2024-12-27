@@ -1,8 +1,8 @@
-import { SafeAreaView, View, Text, StyleSheet } from "react-native";
+import { SafeAreaView, View, Text, StyleSheet, Button } from "react-native";
 import React, { useState } from "react";
 import YetkiliComponent from "./yetkili";
 import OptionComponent from "./option";
-
+import myfirebase from "myfirebase/myfirebase";
 const ProfileScreen = ({ navigation }) => {
    return (
       <SafeAreaView>
@@ -21,6 +21,10 @@ const ProfileScreen = ({ navigation }) => {
          <View style={style.option}>
             <OptionComponent navigation={navigation} />
          </View>
+         <Button
+            title="jsonveri oku"
+            // onPress={() => myfirebase.loadJsonData()}
+         />
       </SafeAreaView>
    );
 };

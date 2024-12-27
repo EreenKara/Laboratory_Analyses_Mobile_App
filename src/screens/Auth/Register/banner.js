@@ -22,7 +22,7 @@ const style = StyleSheet.create({
    imageStyle: {
       flex: 1,
       top: 50,
-      width: Dimensions.get("window").width,
+      width: 400,
       resizeMode: "contain",
    },
 });

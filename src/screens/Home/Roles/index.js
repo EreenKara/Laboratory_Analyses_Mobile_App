@@ -8,7 +8,7 @@ import {
    TouchableOpacity,
    ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import LoadingComponent from "myshared/loading";
 import { Picker } from "@react-native-picker/picker";
 import { Formik } from "formik";
@@ -59,7 +59,6 @@ const RoleScreen = () => {
                   bag.resetForm();
                }
             }}
-            validationSchema={analysisSchema}
          >
             {({
                values,
@@ -71,8 +70,13 @@ const RoleScreen = () => {
                isSubmitting,
                setFieldValue,
             }) => (
-               <View>
-                  <View>
+               <View style={styles.container}>
+                  <View style={styles.headerView}>
+                     <Text style={styles.headerText}>
+                        Kullanıcı için role gir
+                     </Text>
+                  </View>
+                  <View style={styles.pickerView}>
                      <Picker
                         style={styles.pickerStyle}
                         selectedValue={values.user_id}
@@ -130,10 +134,29 @@ const RoleScreen = () => {
 export default RoleScreen;
 
 const styles = StyleSheet.create({
+   headerView: {
+      marginBottom: 30,
+      padding: 10,
+      justifyContent: "center",
+      alignItems: "center",
+   },
+   headerText: {
+      color: "black",
+      fontSize: 32,
+   },
+   container: {
+      flex: 0.8,
+      padding: 10,
+      justifyContent: "center",
+      alignItems: "center",
+   },
    radioButtons: {
+      borderRadius: 15,
+      borderColor: "black",
       marginTop: 10,
       flexDirection: "row",
       justifyContent: "space-evenly",
+      alignItems: "center",
    },
    radioButtonContainer: {
       flexDirection: "row",
@@ -160,9 +183,17 @@ const styles = StyleSheet.create({
    radioButtonLabel: {
       fontSize: 16,
    },
+   pickerView: {
+      height: 60,
+      width: 320,
+      borderColor: "#6D0B21",
+      borderWidth: 2,
+      color: "#344953",
+      borderRadius: 20,
+   },
    pickerStyle: {
       height: 60,
-      width: width,
+      width: 300,
       borderColor: "#6D0B21",
       borderWidth: 10,
       color: "#344953",

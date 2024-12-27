@@ -12,7 +12,6 @@ import { useNavigation } from "@react-navigation/native";
 import { registerUserSchema } from "myutility/validations";
 import { Formik } from "formik";
 import mySqlLite from "myutility/sqllite_storage";
-const width = Dimensions.get("window").width / 1.4;
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "myredux/Reducers/user_reducer";
 
@@ -208,7 +207,7 @@ const style = StyleSheet.create({
       borderRadius: 15,
       padding: 10,
       fontSize: 18,
-      width: width,
+      width: 500,
       marginTop: 10,
       borderColor: "#6D0B21",
       textAlign: "center",
