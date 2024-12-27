@@ -20,8 +20,9 @@ import KlavuzGirScreen from "myscreens/Home/KlavuzGir/index";
 import KlavuzlardaAraScreen from "myscreens/Home/KlavuzlardaAra/index";
 import KlavuzSonucuScreen from "myscreens/Home/KlavuzlardaAra/KlavuzSonucu";
 import HastaninTahliliniGoruntuleScreen from "myscreens/Home/HastaninTahliliniGoruntule/index";
-import TahlilSonucuGirScreen from "../screens/Home/TahlilSonucuGir";
+import TahlilSonucuGirScreen from "myscreens/Home/TahlilSonucuGir";
 import UserDataScreen from "myscreens/Auth/UserData/index";
+import RoleScreen from "myscreens/Home/Roles/index";
 
 const AuthStack = createNativeStackNavigator();
 const AuthStackNavigator = () => {
@@ -105,6 +106,13 @@ const HomeStackNavigator = () => {
             component={KlavuzGirScreen}
             options={() => ({
                title: "KlavuzGir",
+            })}
+         />
+         <HomeStack.Screen
+            name="RoleDegistir"
+            component={RoleScreen}
+            options={() => ({
+               title: "RoleDegistir",
             })}
          />
          <HomeStack.Screen

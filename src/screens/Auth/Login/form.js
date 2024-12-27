@@ -23,7 +23,6 @@ import myfirebase from "myfirebase/myfirebase";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "myredux/Reducers/user_reducer";
 
-const width = Dimensions.get("window").width / 1.4;
 const FormComponent = () => {
    const navigation = useNavigation();
    const dispatch = useDispatch();
@@ -151,7 +150,7 @@ const style = StyleSheet.create({
       borderRadius: 15,
       padding: 10,
       fontSize: 18,
-      width: width,
+      width: 500,
       marginTop: 10,
       borderColor: "#6D0B21",
       textAlign: "center",

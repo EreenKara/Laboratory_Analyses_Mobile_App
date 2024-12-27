@@ -59,6 +59,25 @@ const signUp = async (email, password) => {
    }
 };
 
+const updateUser = async (id, user) => {
+   try {
+      const userRef = doc(db, "users", id);
+      await setDoc(userRef, {
+         name: user.name,
+         surname: user.surname,
+         TC: user.TC,
+         gender: user.gender,
+         birth_date: user.birth_date,
+         email: auth.currentUser.email,
+      });
+
+      console.log("Document written with ID: ", docRef.id);
+      return docRef;
+   } catch (e) {
+      console.error("Error adding document: ", e);
+      return null;
+   }
+};
 const addUser = async (user) => {
    try {
       const docRef = await addDoc(collection(db, "users"), {
@@ -270,6 +289,7 @@ const addGuide = async (guide) => {
 
 const myfirebase = {
    addUser: addUser,
+   updateUser: updateUser,
    signIn: signIn,
    signUp: signUp,
    getUserByEmailAsDoc: getUserByEmailAsDoc,

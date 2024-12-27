@@ -26,8 +26,8 @@ const RoleScreen = () => {
          try {
             const usersData = await myfirebase.getUsers();
             setUsers(usersData);
-            const docRef = await getUserByEmailAsDoc(auth.currentUser.email);
-            // setDoctor({ id: docRef.id, email: docRef.data().email });
+            const rolesData = await myfirebase.getRoles();
+            setRoles(rolesData);
          } catch (error) {
             alert("Kullanıcılar getirilirken hata oluştu");
             navigation.navigate("Home");
@@ -44,15 +44,8 @@ const RoleScreen = () => {
          <Formik
             initialValues={{
                // state tanimlamalari
-               hospital_name: "Eren Hastanesi",
-               doctor_id: doctor.id,
-               numune_alma_zamani: new Date(),
-               numune_kabul_zamani: new Date(),
-               numune_turu: "",
-               rapor_grubu: "",
-               tetkik_istek_zamani: new Date(),
+               role: "",
                user_id: "",
-               uzman_onay_kabul_zamani: new Date(),
             }}
             onSubmit={async (values, bag) => {
                try {
@@ -79,19 +72,54 @@ const RoleScreen = () => {
                setFieldValue,
             }) => (
                <View>
-                  <Picker
-                     style={style.pickerStyle}
-                     selectedValue={values.user_id}
-                     onValueChange={handleChange("user_id")}
-                  >
-                     {users.map((user) => (
-                        <Picker.Item
-                           key={user.id}
-                           label={user.email}
-                           value={user.id}
-                        />
-                     ))}
-                  </Picker>
+                  <View>
+                     <Picker
+                        style={styles.pickerStyle}
+                        selectedValue={values.user_id}
+                        onValueChange={handleChange("user_id")}
+                     >
+                        {users.map((user) => (
+                           <Picker.Item
+                              key={user.id}
+                              label={user.email}
+                              value={user.id}
+                           />
+                        ))}
+                     </Picker>
+                     <View>
+                        <View style={styles.radioButtons}>
+                           {roles.map((role, index) => (
+                              <TouchableOpacity
+                                 key={index}
+                                 style={styles.radioButtonContainer}
+                                 onPress={() => {
+                                    handleChange("role")(role.id);
+                                 }}
+                              >
+                                 <View
+                                    style={
+                                       values.role === role.id
+                                          ? [
+                                               styles.radioButton,
+                                               { backgroundColor: "black" },
+                                            ]
+                                          : styles.radioButton
+                                    }
+                                 >
+                                    {values.role === role.id && (
+                                       <View
+                                          style={[styles.radioButtonSelected]}
+                                       />
+                                    )}
+                                 </View>
+                                 <Text style={styles.radioButtonLabel}>
+                                    {role.role_name}
+                                 </Text>
+                              </TouchableOpacity>
+                           ))}
+                        </View>
+                     </View>
+                  </View>
                </View>
             )}
          </Formik>
@@ -101,4 +129,42 @@ const RoleScreen = () => {
 
 export default RoleScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+   radioButtons: {
+      marginTop: 10,
+      flexDirection: "row",
+      justifyContent: "space-evenly",
+   },
+   radioButtonContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      alignItems: "center",
+      marginBottom: 10,
+   },
+   radioButton: {
+      height: 20,
+      width: 20,
+      borderRadius: 10,
+      borderWidth: 2,
+      borderColor: "#007BFF",
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 10,
+   },
+   radioButtonSelected: {
+      height: 10,
+      width: 10,
+      borderRadius: 5,
+      backgroundColor: "#007BFF",
+   },
+   radioButtonLabel: {
+      fontSize: 16,
+   },
+   pickerStyle: {
+      height: 60,
+      width: width,
+      borderColor: "#6D0B21",
+      borderWidth: 10,
+      color: "#344953",
+   },
+});

@@ -32,7 +32,7 @@ function HomeScreen({ navigation }) {
    return (
       (loading && <LoadingComponent />) || (
          <SafeAreaView style={{ flex: 1 }}>
-            <View>
+            <ScrollView>
                <View>
                   <Text style={[style.header, { backgroundColor: "#F29F58" }]}>
                      Hasta
@@ -95,9 +95,9 @@ function HomeScreen({ navigation }) {
                      <View style={style.doctorBoxes}>
                         <BoxComponent
                            color="#0A97B0"
-                           name="Hastanın Tahlilini Görüntüle"
+                           name="RoleDegistir"
                            toNavigate={() =>
-                              navigation.navigate("HastaninTahliliniGoruntule")
+                              navigation.navigate("RoleDegistir")
                            }
                         />
                      </View>
@@ -108,7 +108,7 @@ function HomeScreen({ navigation }) {
                   title="To Login"
                   onPress={() => navigation.navigate("Auth")}
                />
-            </View>
+            </ScrollView>
          </SafeAreaView>
       )
    );
