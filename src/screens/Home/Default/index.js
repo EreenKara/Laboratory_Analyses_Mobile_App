@@ -105,11 +105,6 @@ function HomeScreen({ navigation }) {
                      </View>
                   </View>
                )}
-               <Button
-                  style={style.buttonStyle}
-                  title="To Login"
-                  onPress={() => navigation.navigate("Auth")}
-               />
             </ScrollView>
          </SafeAreaView>
       )

@@ -18,13 +18,6 @@ const ProfileScreen = ({ navigation }) => {
          <View style={style.option}>
             <OptionComponent navigation={navigation} />
          </View>
-         <View style={style.option}>
-            <OptionComponent navigation={navigation} />
-         </View>
-         <Button
-            title="jsonveri oku"
-            // onPress={() => myfirebase.loadJsonData()}
-         />
       </SafeAreaView>
    );
 };

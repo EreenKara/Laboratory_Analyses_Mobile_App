@@ -112,22 +112,11 @@ const FormComponent = () => {
                   onPress={() =>
                      navigation.reset({
                         index: 0,
-                        routes: [{ name: "Home" }], // Yığını sıfırla ve HomeDrawer'a geç
+                        routes: [{ name: "Login" }], // Yığını sıfırla ve HomeDrawer'a geç
                      })
                   }
                >
                   <Text style={style.text}>Giriş yap</Text>
-               </TouchableOpacity>
-               <TouchableOpacity
-                  style={style.button}
-                  onPress={() =>
-                     navigation.reset({
-                        index: 0,
-                        routes: [{ name: "Register" }], // Yığını sıfırla ve HomeDrawer'a geç
-                     })
-                  }
-               >
-                  <Text style={style.text}>Kayıt olun</Text>
                </TouchableOpacity>
             </View>
          )}
