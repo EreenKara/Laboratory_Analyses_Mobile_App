@@ -7,7 +7,7 @@ import LoadingComponent from "myshared/loading";
 const upIcon = "arrow-up-outline";
 const downIcon = "arrow-down-outline";
 const normalIcon = "remove-outline";
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const AnalysisElementsComponent = ({
    previousTahliller,
    userdata,
@@ -15,8 +15,8 @@ const AnalysisElementsComponent = ({
 }) => {
    const [loading, setLoading] = useState(true);
    const [guides, setGuides] = useState([]);
-   const [iconName, setIconName] = useState("");
-   const [backColor, setBackColor] = useState("");
+   const [iconName, setIconName] = useState(null);
+   const [backColor, setBackColor] = useState("gray");
    const [minMax, setMinMax] = useState({ min: 0, max: 0 });
    const [previousValues, setPreviousValues] = useState([]);
    const karsilastir = async () => {
@@ -28,7 +28,6 @@ const AnalysisElementsComponent = ({
          maximum += guide.max_value;
          index++;
       });
-
       let ortmin = minimum / index;
       let ortmax = maximum / index;
       if (ortmin <= element.value && element.value <= ortmax) {
@@ -44,7 +43,6 @@ const AnalysisElementsComponent = ({
          setIconName(upIcon);
          setBackColor("#7C444F");
       }
-
       setMinMax({ min: ortmin, max: ortmax });
    };
    const eslesenleriBul = async () => {
@@ -101,20 +99,20 @@ const AnalysisElementsComponent = ({
          );
       }
       setPreviousValues(dizi);
-      await delay(500);
    };
    const processAsyncTasks = async () => {
-      await eslesenleriBul();
+      try {
+         await eslesenleriBul(); // İlk işlemi bekle
+         await karsilastir(); // İkinci işlemi bekle
+         await fetchSomeData(); // Üçüncü işlemi bekle
+         setLoading(false); // Tüm işlemler tamamlandı
+      } catch (error) {
+         console.error("Hata oluştu:", error);
+      }
    };
    useEffect(() => {
       processAsyncTasks();
    }, []);
-
-   useEffect(() => {
-      karsilastir()
-         .then(() => fetchSomeData())
-         .then(() => setLoading(false));
-   }, [guides]);
    return loading ? (
       <LoadingComponent />
    ) : (
@@ -137,6 +135,7 @@ const AnalysisElementsComponent = ({
       </View>
    );
 };
+const eren = 2;
 export default AnalysisElementsComponent;
 
 const styles = StyleSheet.create({

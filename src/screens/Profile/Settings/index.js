@@ -14,16 +14,14 @@ import { userDataSchema } from "myutility/validations";
 import { Formik } from "formik";
 //  import mySqlLite from "myutility/sqllite_storage";
 import { useSelector, useDispatch } from "react-redux";
-import { setUser } from "myredux/Reducers/user_reducer";
 import myfirebase from "myfirebase/myfirebase";
 import LoadingComponent from "myshared/loading";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Timestamp } from "firebase/firestore";
+
 const SettingsScreen = () => {
    const navigation = useNavigation();
    const [show_birth_date, set_show_birth_date] = useState(false);
    const [loading, setLoading] = useState(true);
-   const dispatch = useDispatch();
    const options = ["Kadin", "Erkek"];
    const [user, setUser] = useState(null);
    const email = useSelector((state) => state.userReducer.user.email);
@@ -38,6 +36,7 @@ const SettingsScreen = () => {
          } catch (e) {
             bag.resetForm();
             console.log("Kullanci bilgi girisinde hata.");
+            console.error(e);
             return;
          } finally {
             setLoading(false);
@@ -50,35 +49,37 @@ const SettingsScreen = () => {
       (loading && <LoadingComponent />) || (
          <Formik
             initialValues={{
-               // state tanimlamalari
-               name: user.data().name,
-               surname: user.data().surname,
-               gender: user.data().gender,
-               birth_date: user.data().birth_date.toDate(),
-               TC: user.data().TC,
+               // Eğer user verisi mevcutsa, user'ın değerleri ile başlat.
+               name: user ? user.data().name : "",
+               surname: user ? user.data().surname : "",
+               gender: user ? user.data().gender : "",
+               birth_date: user ? user.data().birth_date.toDate() : new Date(),
+               TC: user ? user.data().TC : "",
             }}
             onSubmit={async (values, bag) => {
                try {
-                  const user = await myfirebase.updateUser(user.id, values);
-
-                  if (user === null) {
-                     bag.resetForm();
-                     console.log(
-                        "bilgi girisini gonderirken hata olustu. Tekrar deneyiniz."
+                  console.log("nerede hata var");
+                  // user objesini kontrol etmeden işlem yapma
+                  if (!user || user.id === undefined) {
+                     // Yeni kullanıcı ekleme işlemi
+                     const newUser = await myfirebase.addUser(values);
+                  } else {
+                     // Mevcut kullanıcıyı güncelleme işlemi
+                     const updatedUser = await myfirebase.updateUser(
+                        user.id,
+                        values
                      );
-                     alert("hata olustu");
-                     return;
                   }
-                  console.log("Basarili bilgi girisi");
-                  alert("Basarili bilgi girisi");
+
+                  console.log("Başarılı bilgi girişi");
+                  alert("Başarılı bilgi girişi");
                   navigation.navigate("Home");
                } catch (error) {
-                  alert("hata olustu");
-
-                  return;
+                  console.error(error);
+                  alert("Hata oluştu");
                }
             }}
-            validationSchema={userDataSchema}
+            // validationSchema={userDataSchema} // Bu kısımda validation ekleyebilirsiniz
          >
             {({
                values,
@@ -89,7 +90,6 @@ const SettingsScreen = () => {
                handleSubmit,
                isSubmitting,
                setFieldValue,
-               /* and other goodies */
             }) => (
                <SafeAreaView style={style.container}>
                   {errors.name && touched.name && (
@@ -147,7 +147,6 @@ const SettingsScreen = () => {
                      onBlur={handleBlur("surname")}
                      editable={!isSubmitting}
                   />
-
                   {errors.birth_date && touched.birth_date && (
                      <Text style={style.errorText}>{errors.birth_date}</Text>
                   )}
@@ -172,7 +171,6 @@ const SettingsScreen = () => {
                         }}
                      />
                   )}
-
                   {errors.TC && touched.TC && (
                      <Text style={style.errorText}>{errors.TC}</Text>
                   )}
@@ -186,13 +184,12 @@ const SettingsScreen = () => {
                      onBlur={handleBlur("TC")}
                      editable={!isSubmitting}
                   />
-
                   <TouchableOpacity
                      style={style.button}
                      onPress={handleSubmit}
                      disabled={isSubmitting}
                   >
-                     <Text style={style.text}>Bilgileri Gonder</Text>
+                     <Text style={style.text}>Bilgileri Gönder</Text>
                   </TouchableOpacity>
                </SafeAreaView>
             )}
@@ -200,6 +197,7 @@ const SettingsScreen = () => {
       )
    );
 };
+const width = 320;
 
 const style = StyleSheet.create({
    container: {
@@ -214,7 +212,7 @@ const style = StyleSheet.create({
       borderRadius: 15,
       padding: 10,
       fontSize: 18,
-      width: 500,
+      width: width,
       marginTop: 10,
       borderColor: "#6D0B21",
       textAlign: "center",
@@ -228,7 +226,7 @@ const style = StyleSheet.create({
       backgroundColor: "#8D0B41",
       flex: 0.2,
       fontSize: 16,
-      width: 350,
+      width: width,
       height: 30,
       justifyContent: "center",
       alignItems: "center",
@@ -266,7 +264,7 @@ const style = StyleSheet.create({
    },
    dateStyle: {
       marginTop: 10,
-      width: 500,
+      width: width,
    },
 });
 

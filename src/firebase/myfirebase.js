@@ -8,6 +8,7 @@ import {
    doc,
    getDocs,
    getDoc,
+   updateDoc,
    setDoc,
    Timestamp,
 } from "firebase/firestore";
@@ -61,8 +62,10 @@ const signUp = async (email, password) => {
 
 const updateUser = async (id, user) => {
    try {
+      console.log("useridss:", user.id);
+
       const userRef = doc(db, "users", id);
-      await setDoc(userRef, {
+      await updateDoc(userRef, {
          name: user.name,
          surname: user.surname,
          TC: user.TC,
@@ -71,10 +74,11 @@ const updateUser = async (id, user) => {
          email: auth.currentUser.email,
       });
 
-      return docRef;
+      return userRef;
    } catch (e) {
       console.error("Error adding document: ", e);
-      return null;
+      console.log("eslam: ");
+      throw e;
    }
 };
 const addUser = async (user) => {
@@ -120,6 +124,7 @@ const getUserByIdAsDoc = async (id) => {
          return null; // Eğer doküman bulunmazsa null döndür
       }
    } catch (error) {
+      console.error(error);
       throw error;
    }
 };
@@ -233,21 +238,136 @@ const getElements = async () => {
       throw error;
    }
 };
-const getAnalysisElementsByDate = async (userId, elementId, tarih) => {
+const getAnalysisElementsbyAnalysisID = async (
+   analysisId1,
+   analysisId2,
+   elementId
+) => {
    try {
-   } catch (error) {}
+      let dizi = [];
+      const analysis_elementsCollection = collection(db, "analysis_elements");
+      let results1 = null;
+      let results2 = null;
+      if (analysisId1 && analysisId1 !== "") {
+         const analysisDocRef1 = doc(db, "analysis", analysisId1);
+         const analysisDoc1 = await getDoc(analysisDocRef1);
+         if (analysisDoc1.exists()) {
+            const queryElements1 = query(
+               analysis_elementsCollection,
+               where("analysis_id", "==", analysisDoc1.id),
+               where("element_id", "==", elementId)
+            );
+            results1 = await getDocs(queryElements1);
+         }
+      }
+      if (analysisId2 && analysisId2 !== "") {
+         const analysisDocRef2 = doc(db, "analysis", analysisId2);
+         const analysisDoc2 = await getDoc(analysisDocRef2);
+         if (analysisDoc2.exists()) {
+            const queryElements2 = query(
+               analysis_elementsCollection,
+               where("analysis_id", "==", analysisDoc2.id),
+               where("element_id", "==", elementId)
+            );
+            results2 = await getDocs(queryElements2);
+         }
+      }
+      let combinedResults = [];
+      if (results1) combinedResults.push(results1);
+      if (results2) combinedResults.push(results2);
+      combinedResults.forEach((result) => {
+         result.docs.forEach((doc) => {
+            dizi.push({
+               analysis_id: doc.data().analysis_id,
+               element_id: doc.data().element_id,
+               value: doc.data().value,
+            });
+         });
+      });
+
+      return dizi;
+   } catch (error) {
+      console.error(error);
+      throw error;
+   }
+};
+const getAnalysisByDateJustTwo = async (userId, tarih) => {
+   try {
+      const timestampValue = Timestamp.fromDate(tarih);
+      const dizi = [];
+      const user = await getUserByIdAsDoc(userId);
+      const analysisCollection = collection(db, "analysis");
+
+      const queryAnalysis = query(
+         analysisCollection,
+         where("user_id", "==", user.id),
+         where("numune_alma_zamani", "<", timestampValue)
+      );
+      const querySnapshot = await getDocs(queryAnalysis);
+      if (!querySnapshot.empty) {
+         const analysis_elementsCollection = collection(
+            db,
+            "analysis_elements"
+         );
+         let index = 0;
+         await Promise.all(
+            querySnapshot.docs.map(async (doc) => {
+               if (index === 2) {
+               } else {
+                  const queryElements = query(
+                     analysis_elementsCollection,
+                     where("analysis_id", "==", doc.id)
+                  );
+
+                  const querySnapshotElements = await getDocs(queryElements);
+                  dizi.push({
+                     id: doc.id,
+                     hospital_name: doc.data().hospital_name,
+                     doctor_id: doc.data().doctor_id,
+                     numune_alma_zamani: doc.data().numune_alma_zamani.toDate(),
+                     numune_kabul_zamani: doc
+                        .data()
+                        .numune_kabul_zamani.toDate(),
+                     numune_turu: doc.data().numune_turu,
+                     rapor_grubu: doc.data().rapor_grubu,
+                     tetkik_istek_zamani: doc
+                        .data()
+                        .tetkik_istek_zamani.toDate(),
+                     user_id: doc.data().user_id,
+                     uzman_onay_kabul_zamani: doc
+                        .data()
+                        .uzman_onay_kabul_zamani.toDate(),
+                     perElement: querySnapshotElements.docs.map(
+                        (docElement) => ({
+                           element_id: docElement.data().element_id,
+                           value: docElement.data().value,
+                        })
+                     ),
+                  });
+                  index = index + 1;
+               }
+            })
+         );
+      }
+
+      return dizi;
+   } catch (error) {
+      console.error(error);
+      throw error;
+   }
 };
 const getAnalysisWithElements = async (userId) => {
    try {
       const dizi = [];
-      console.log("userid:", userId);
       const user = await getUserByIdAsDoc(userId);
       const analysisCollection = collection(db, "analysis");
       const queryAnalysis = query(
          analysisCollection,
          where("user_id", "==", user.id)
       );
+
       const querySnapshot = await getDocs(queryAnalysis);
+
       if (!querySnapshot.empty) {
          // const analysisId = querySnapshot.docs[0].id; // İlk dokümanı al
          const analysis_elementsCollection = collection(
@@ -341,6 +461,27 @@ const getUsers = async () => {
       throw error;
    }
 };
+const getUserWithData = async () => {
+   try {
+      const userDoc = await getUserByEmailAsDoc(auth.currentUser.email);
+      if (userDoc !== null) {
+         const userdata = userDoc.data();
+         const user = {
+            id: userDoc.id,
+            email: userdata.email,
+            name: userdata.name,
+            surname: userdata.surname,
+            TC: userdata.TC,
+            gender: userdata.gender,
+            birth_date: userdata.birth_date.toDate(),
+         };
+         return user;
+      }
+   } catch (error) {
+      console.error("error:", error);
+      throw error;
+   }
+};
 const getUsersWithData = async () => {
    try {
       const dizi = [];
@@ -362,25 +503,50 @@ const getUsersWithData = async () => {
       throw error;
    }
 };
+const handleRole = async (userId, roleId) => {
+   try {
+      console.log("calisti1");
+      const userDoc = await getUserByIdAsDoc(userId);
+      const user = userDoc.data();
+      const docRef = doc(db, "users_roles", user.email);
+      console.log("calisti2");
+      const docSnapshot = await getDoc(docRef);
+      console.log("calisti3");
 
+      if (!docSnapshot.exists()) {
+         console.log("calisti4");
+
+         await setDoc(docRef, {
+            role_id: roleId,
+         });
+         console.log("calisti4");
+      } else {
+         console.log("calisti5");
+         await updateDoc(docRef, {
+            role_id: roleId,
+         });
+         console.log("calisti5");
+      }
+   } catch (error) {
+      console.log("error oldu");
+      throw error;
+   }
+};
 const getUserRoleByEmail = async (email) => {
    try {
-      const userEmail = email;
-      if (!userEmail) {
-         throw new Error("User not authenticated.");
-      }
       // users_roles koleksiyonundaki document ID'si ile e-posta eşleştiği için
-      const docRef = doc(db, "users_roles", userEmail); // Doc ID = userEmail
-
+      const docRef = doc(db, "users_roles", email); // Doc ID = userEmail
       // Belirtilen document'i almak için getDoc kullanıyoruz
       const docSnapshot = await getDoc(docRef);
 
       if (!docSnapshot.exists()) {
          console.log("No matching document found.");
-         return null;
+         return "role1";
       }
+
       return docSnapshot.data().role_id;
    } catch (error) {
+      console.error(error);
       throw error;
    }
 };
@@ -1060,7 +1226,10 @@ const myfirebase = {
    getUserRoleByEmail: getUserRoleByEmail,
    getAnalysisWithElements: getAnalysisWithElements,
    getUserByIdAsDoc: getUserByIdAsDoc,
-   getAnalysisElementsByDate: getAnalysisElementsByDate,
+   getAnalysisByDateJustTwo: getAnalysisByDateJustTwo,
+   handleRole: handleRole,
+   getAnalysisElementsbyAnalysisID: getAnalysisElementsbyAnalysisID,
+   getUserWithData: getUserWithData,
 };
 
 export default myfirebase;

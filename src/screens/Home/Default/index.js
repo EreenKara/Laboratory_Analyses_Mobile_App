@@ -27,14 +27,12 @@ function HomeScreen({ navigation }) {
             const tempRole = await myfirebase.getUserRoleByEmail(user.email);
             setRole(tempRole);
          } catch (error) {
-            setRole("role1");
+            alert("izinsiz erisim hatasi");
          } finally {
-            setLoading(false);
-            console.log("role", role);
          }
       };
 
-      fetchData();
+      fetchData().then(() => setLoading(false));
    }, []);
    return (
       (loading && <LoadingComponent />) || (

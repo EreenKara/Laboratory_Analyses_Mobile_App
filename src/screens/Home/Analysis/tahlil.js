@@ -1,100 +1,211 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
+import {
+   Animated,
+   TouchableOpacity,
+   Text,
+   View,
+   StyleSheet,
+   ScrollView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import TahlilDegerComponent from "./tahlil_deger";
+import myfirebase from "myfirebase/myfirebase";
+import LoadingComponent from "myshared/loading";
 
-const TahlilComponent = () => {
-   const renderItem = ({ item }) => {
-      const isOutOfRange =
-         item.value < item.referenceRange.min ||
-         item.value > item.referenceRange.max;
-
-      return (
-         <View style={styles.resultContainer}>
-            <Text style={styles.testName}>{item.testName}</Text>
-            <Text
-               style={[
-                  styles.resultValue,
-                  isOutOfRange && styles.outOfRangeValue,
-               ]}
-            >
-               {item.value} {item.unit}
-            </Text>
-            <Text style={styles.referenceRange}>
-               Referans Aralığı: {item.referenceRange.min} -{" "}
-               {item.referenceRange.max} {item.unit}
-            </Text>
-         </View>
-      );
+const TahlilComponent = ({ userdata, tahlil }) => {
+   const [loading, setLoading] = useState(true);
+   const [isExpanded, setIsExpanded] = useState(false);
+   const animationValue = useRef(new Animated.Value(0)).current;
+   const backgroundColor1 = "#f0f0f0";
+   const backgroundColor2 = "#fff";
+   // const [doctor, setDoctor] = useState(null);
+   const [previousTahliller, setPreviousTahliller] = useState([]);
+   useEffect(() => {
+      const fetchData = async () => {
+         try {
+            // const doctorDoc = await myfirebase.getUserByIdAsDoc(
+            //    tahlil.doctor_id
+            // );
+            // const doctorData = doctorDoc.data();
+            // setDoctor(doctorData);
+            const tempPreviousTahliller =
+               await myfirebase.getAnalysisByDateJustTwo(
+                  userdata.id,
+                  tahlil.numune_alma_zamani
+               );
+            setPreviousTahliller(tempPreviousTahliller);
+         } catch (error) {
+            alert("Hata2");
+            navigation.navigate("Home");
+         } finally {
+            setLoading(false);
+         }
+      };
+      fetchData();
+   }, []);
+   const toggleExpand = () => {
+      setIsExpanded(!isExpanded);
+      Animated.timing(animationValue, {
+         toValue: isExpanded ? 0 : 1, // Açıkken 1, kapalıyken 0
+         duration: 300, // Animasyon süresi (ms)
+         useNativeDriver: false,
+      }).start();
    };
 
+   const heightInterpolation = animationValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 300], // Kapalı halde 0, açık halde 100 piksel
+   });
    return (
-      <View style={styles.container}>
-         <Text style={styles.header}>Tahlil Sonuçları</Text>
-         <FlatList
-            data={results}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderItem}
-         />
-      </View>
-   );
-   return (
-      <View style={styles.tahlil}>
-         <View style={styles.tahlilHeader}>
-            <Text>TahlilHeader</Text>
-         </View>
-         <View style={styles.tahlilElement}>
-            <Text>Tahlil her bir elemnt</Text>
-         </View>
-      </View>
+      (loading && <LoadingComponent />) || (
+         <ScrollView style={styles.container}>
+            {/* Tıklanabilir Başlık */}
+            <TouchableOpacity onPress={toggleExpand} style={styles.compNavBar}>
+               <View style={styles.headerTextView}>
+                  {/* <Text style={styles.headerText}>Doctor TC: {doctor.TC}</Text> */}
+                  <Text style={styles.headerText}>
+                     Hastane adı: {tahlil.hospital_name}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Numune Türü: {tahlil.numune_turu}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Tetkik Istek Zamani: {tahlil.tetkik_istek_zamani.getDate()}
+                     /{tahlil.tetkik_istek_zamani.getMonth()}/
+                     {tahlil.tetkik_istek_zamani.getFullYear()}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Numune Alma Zamani: {tahlil.numune_alma_zamani.getDate()}/
+                     {tahlil.numune_alma_zamani.getMonth()}/
+                     {tahlil.numune_alma_zamani.getFullYear()}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Rapor Grubu: {tahlil.rapor_grubu}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Numune Kabul Zamani: {tahlil.numune_kabul_zamani.getDate()}
+                     /{tahlil.numune_kabul_zamani.getMonth()}/
+                     {tahlil.numune_kabul_zamani.getFullYear()}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Uzman Onay Zamani:{" "}
+                     {tahlil.uzman_onay_kabul_zamani.getDate()}/
+                     {tahlil.uzman_onay_kabul_zamani.getMonth()}/
+                     {tahlil.uzman_onay_kabul_zamani.getFullYear()}
+                  </Text>
+               </View>
+               <View style={styles.iconView}>
+                  <Ionicons
+                     name="chevron-down-outline"
+                     size={24}
+                     color="black"
+                  />
+               </View>
+            </TouchableOpacity>
+
+            {/* Genişleyen İçerik */}
+            <Animated.View
+               style={[styles.content, { height: heightInterpolation }]}
+            >
+               <View>
+                  <View style={styles.headers}>
+                     <Text
+                        style={[
+                           styles.perColumn,
+                           { backgroundColor: backgroundColor1 },
+                        ]}
+                     >
+                        Tetkik Adı
+                     </Text>
+                     <Text style={styles.perColumn}> Sonuc</Text>
+                     <Text style={styles.perColumn}> Referans Aralığı</Text>
+                     <Text style={[styles.perColumn, { width: "40%" }]}>
+                        Onceki Sonuclar
+                     </Text>
+                  </View>
+                  <View style={styles.elementView}>
+                     {tahlil.perElement.map((element, index) => {
+                        const backColor =
+                           index % 2 === 0
+                              ? backgroundColor1
+                              : backgroundColor2;
+                        return (
+                           <TahlilDegerComponent
+                              key={index}
+                              previousTahliller={previousTahliller}
+                              userdata={userdata}
+                              element={element}
+                           />
+                        );
+                     })}
+                  </View>
+               </View>
+            </Animated.View>
+         </ScrollView>
+      )
    );
 };
-
+const eren = 2;
 export default TahlilComponent;
 
 const styles = StyleSheet.create({
    container: {
-      flex: 1,
-      padding: 20,
-      backgroundColor: "#f7f7f7",
-   },
-   header: {
-      fontSize: 22,
-      fontWeight: "bold",
-      marginBottom: 10,
-      textAlign: "center",
-      color: "#4b0082",
-   },
-   resultContainer: {
-      backgroundColor: "#ffffff",
-      padding: 15,
+      margin: 10,
+      borderWidth: 1,
+      borderColor: "#ccc",
       borderRadius: 8,
-      marginBottom: 10,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-      elevation: 3,
+      overflow: "hidden",
+      width: "95%",
    },
-   testName: {
-      fontSize: 18,
-      fontWeight: "bold",
+   compNavBar: {
+      flexDirection: "row",
+      justifyContent: "space-evenly",
+      backgroundColor: "#9AA6B2",
+      padding: 10,
+      width: "100%",
+      flex: 1,
+   },
+   headers: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      backgroundColor: "#f0f0f0",
+   },
+   perColumn: {
+      width: "20%",
+      textAlign: "center",
+   },
+   headerTextView: {
+      padding: 5,
+      flex: 0.9,
+
+      flexWrap: "wrap",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      width: "100%",
+   },
+   iconView: {
+      flex: 0.1,
+      position: "relative",
+      top: 5,
+   },
+   headerText: {
+      color: "#fff",
+      fontSize: 16,
+      textAlign: "center",
+      minWidth: "20%",
+   },
+   content: {
+      backgroundColor: "#f9f9f9",
+      overflow: "hidden",
+   },
+   contentText: {
+      padding: 10,
+      fontSize: 14,
       color: "#333",
    },
-   resultValue: {
-      fontSize: 16,
-      fontWeight: "600",
-      color: "#008000",
+   elementView: {
+      flexWrap: "wrap",
+      flexDirection: "column",
    },
-   outOfRangeValue: {
-      color: "#ff0000",
-   },
-   referenceRange: {
-      fontSize: 14,
-      color: "#555",
-      marginTop: 5,
-   },
-   tahlil: {
-      backgroundColor: "red",
-   },
-   tahlilHeader: {},
-   tahlilElement: {},
 });

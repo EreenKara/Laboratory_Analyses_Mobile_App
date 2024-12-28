@@ -21,6 +21,7 @@ const RoleScreen = () => {
 
    const [users, setUsers] = useState([]);
    const [roles, setRoles] = useState([]);
+
    useEffect(() => {
       const fetchUsers = async () => {
          try {
@@ -44,19 +45,18 @@ const RoleScreen = () => {
          <Formik
             initialValues={{
                // state tanimlamalari
-               role: "",
-               user_id: "",
+               role_id: "",
+               user_id: users[0].id,
             }}
             onSubmit={async (values, bag) => {
                try {
-                  const docRef = await myfirebase.addAnalysis(values);
-                  alert("Tahlil sonucu başarıyla girildi");
+                  await myfirebase.handleRole(values.user_id, values.role_id);
+                  alert("Role Degistirildi");
                } catch (e) {
-                  alert("Tahlil sonucu girilirken hata oluştu");
+                  alert("Role degistirilirken hata");
                   console.log(e);
                } finally {
                   bag.setSubmitting(false);
-                  bag.resetForm();
                }
             }}
          >
@@ -97,12 +97,12 @@ const RoleScreen = () => {
                                  key={index}
                                  style={styles.radioButtonContainer}
                                  onPress={() => {
-                                    handleChange("role")(role.id);
+                                    handleChange("role_id")(role.id);
                                  }}
                               >
                                  <View
                                     style={
-                                       values.role === role.id
+                                       values.role_id === role.id
                                           ? [
                                                styles.radioButton,
                                                { backgroundColor: "black" },
@@ -110,7 +110,7 @@ const RoleScreen = () => {
                                           : styles.radioButton
                                     }
                                  >
-                                    {values.role === role.id && (
+                                    {values.role_id === role.id && (
                                        <View
                                           style={[styles.radioButtonSelected]}
                                        />
@@ -123,6 +123,7 @@ const RoleScreen = () => {
                            ))}
                         </View>
                      </View>
+                     <Button title="rol degistir" onPress={handleSubmit} />
                   </View>
                </View>
             )}

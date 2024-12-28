@@ -64,10 +64,11 @@ const KlavuzlardaAraScreen = () => {
                age_format: "Day",
                element_id: "IgA",
             }}
-            onSubmit={async (values, bag) => {
+            onSubmit={(values, bag) => {
+               console.log(values); // Burada values'a bakarak hangi verilerin geldiğini kontrol edin.
                try {
-                  navigation.navigate("KlavuzSonucuScreen", values);
-                  alert("klavuzda arama gerceklestirilecek");
+                  alert("Klavuzda arama gerçekleşecek");
+                  navigation.navigate("KlavuzSonucu", values);
                } catch (e) {
                   alert("Klavuzda arama sırasında hata");
                   console.log(e);
@@ -76,7 +77,7 @@ const KlavuzlardaAraScreen = () => {
                   bag.resetForm();
                }
             }}
-            validationSchema={analysisSchema}
+            // validationSchema={analysisSchema}
          >
             {({
                values,
@@ -137,7 +138,7 @@ const KlavuzlardaAraScreen = () => {
                         onPress={handleSubmit}
                         disabled={isSubmitting}
                      >
-                        <Text style={style.text}>Tahlil Gir</Text>
+                        <Text style={style.text}>Klavuzlarda Ara</Text>
                      </TouchableOpacity>
                   </ScrollView>
                </View>
@@ -179,8 +180,8 @@ const style = StyleSheet.create({
       marginTop: 10,
       backgroundColor: "#8D0B41",
       flex: 0.2,
-      height: 30,
-      width: 100,
+      height: 50,
+      width: 200,
       fontSize: 20,
       justifyContent: "center",
       alignItems: "center",

@@ -10,13 +10,16 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import AnalysisElementsComponent from "./analysis_element_comp";
 import myfirebase from "myfirebase/myfirebase";
+import LoadingComponent from "myshared/loading";
 
 const PerAnalysisComponet = ({ userdata, tahlil }) => {
+   const [loading, setLoading] = useState(true);
    const [isExpanded, setIsExpanded] = useState(false);
    const animationValue = useRef(new Animated.Value(0)).current;
    const backgroundColor1 = "#f0f0f0";
    const backgroundColor2 = "#fff";
    const [doctor, setDoctor] = useState(null);
+   const [previousTahliller, setPreviousTahliller] = useState([]);
    useEffect(() => {
       const fetchData = async () => {
          try {
@@ -25,6 +28,12 @@ const PerAnalysisComponet = ({ userdata, tahlil }) => {
             );
             const doctorData = doctorDoc.data();
             setDoctor(doctorData);
+            const tempPreviousTahliller =
+               await myfirebase.getAnalysisByDateJustTwo(
+                  userdata.id,
+                  tahlil.numune_alma_zamani
+               );
+            setPreviousTahliller(tempPreviousTahliller);
          } catch (error) {
             alert("Hata2");
             navigation.navigate("Home");
@@ -48,84 +57,95 @@ const PerAnalysisComponet = ({ userdata, tahlil }) => {
       outputRange: [0, 300], // Kapalı halde 0, açık halde 100 piksel
    });
    return (
-      <ScrollView style={styles.container}>
-         {/* Tıklanabilir Başlık */}
-         <TouchableOpacity onPress={toggleExpand} style={styles.compNavBar}>
-            <View style={styles.headerTextView}>
-               {/* <Text style={styles.headerText}>Doctor TC: {doctor.TC}</Text> */}
-               <Text style={styles.headerText}>
-                  Hastane adı: {tahlil.hospital_name}
-               </Text>
-               <Text style={styles.headerText}>
-                  Numune Türü: {tahlil.numune_turu}
-               </Text>
-               <Text style={styles.headerText}>
-                  Tetkik Istek Zamani: {tahlil.tetkik_istek_zamani.getDate()}/
-                  {tahlil.tetkik_istek_zamani.getMonth()}/
-                  {tahlil.tetkik_istek_zamani.getFullYear()}
-               </Text>
-               <Text style={styles.headerText}>
-                  Numune Alma Zamani: {tahlil.numune_alma_zamani.getDate()}/
-                  {tahlil.numune_alma_zamani.getMonth()}/
-                  {tahlil.numune_alma_zamani.getFullYear()}
-               </Text>
-               <Text style={styles.headerText}>
-                  Rapor Grubu: {tahlil.rapor_grubu}
-               </Text>
-               <Text style={styles.headerText}>
-                  Numune Kabul Zamani: {tahlil.numune_kabul_zamani.getDate()}/
-                  {tahlil.numune_kabul_zamani.getMonth()}/
-                  {tahlil.numune_kabul_zamani.getFullYear()}
-               </Text>
-               <Text style={styles.headerText}>
-                  Uzman Onay Zamani: {tahlil.uzman_onay_kabul_zamani.getDate()}/
-                  {tahlil.uzman_onay_kabul_zamani.getMonth()}/
-                  {tahlil.uzman_onay_kabul_zamani.getFullYear()}
-               </Text>
-            </View>
-            <View style={styles.iconView}>
-               <Ionicons name="chevron-down-outline" size={24} color="black" />
-            </View>
-         </TouchableOpacity>
+      (loading && <LoadingComponent />) || (
+         <ScrollView style={styles.container}>
+            {/* Tıklanabilir Başlık */}
+            <TouchableOpacity onPress={toggleExpand} style={styles.compNavBar}>
+               <View style={styles.headerTextView}>
+                  {/* <Text style={styles.headerText}>Doctor TC: {doctor.TC}</Text> */}
+                  <Text style={styles.headerText}>
+                     Hastane adı: {tahlil.hospital_name}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Numune Türü: {tahlil.numune_turu}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Tetkik Istek Zamani: {tahlil.tetkik_istek_zamani.getDate()}
+                     /{tahlil.tetkik_istek_zamani.getMonth()}/
+                     {tahlil.tetkik_istek_zamani.getFullYear()}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Numune Alma Zamani: {tahlil.numune_alma_zamani.getDate()}/
+                     {tahlil.numune_alma_zamani.getMonth()}/
+                     {tahlil.numune_alma_zamani.getFullYear()}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Rapor Grubu: {tahlil.rapor_grubu}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Numune Kabul Zamani: {tahlil.numune_kabul_zamani.getDate()}
+                     /{tahlil.numune_kabul_zamani.getMonth()}/
+                     {tahlil.numune_kabul_zamani.getFullYear()}
+                  </Text>
+                  <Text style={styles.headerText}>
+                     Uzman Onay Zamani:{" "}
+                     {tahlil.uzman_onay_kabul_zamani.getDate()}/
+                     {tahlil.uzman_onay_kabul_zamani.getMonth()}/
+                     {tahlil.uzman_onay_kabul_zamani.getFullYear()}
+                  </Text>
+               </View>
+               <View style={styles.iconView}>
+                  <Ionicons
+                     name="chevron-down-outline"
+                     size={24}
+                     color="black"
+                  />
+               </View>
+            </TouchableOpacity>
 
-         {/* Genişleyen İçerik */}
-         <Animated.View
-            style={[styles.content, { height: heightInterpolation }]}
-         >
-            <View>
-               <View style={styles.headers}>
-                  <Text
-                     style={[
-                        styles.perColumn,
-                        { backgroundColor: backgroundColor1 },
-                     ]}
-                  >
-                     Tetkik Adı
-                  </Text>
-                  <Text style={styles.perColumn}> Sonuc</Text>
-                  <Text style={styles.perColumn}> Referans Aralığı</Text>
-                  <Text style={[styles.perColumn, { width: "40%" }]}>
-                     Onceki Sonuclar
-                  </Text>
+            {/* Genişleyen İçerik */}
+            <Animated.View
+               style={[styles.content, { height: heightInterpolation }]}
+            >
+               <View>
+                  <View style={styles.headers}>
+                     <Text
+                        style={[
+                           styles.perColumn,
+                           { backgroundColor: backgroundColor1 },
+                        ]}
+                     >
+                        Tetkik Adı
+                     </Text>
+                     <Text style={styles.perColumn}> Sonuc</Text>
+                     <Text style={styles.perColumn}> Referans Aralığı</Text>
+                     <Text style={[styles.perColumn, { width: "40%" }]}>
+                        Onceki Sonuclar
+                     </Text>
+                  </View>
+                  <View style={styles.elementView}>
+                     {tahlil.perElement.map((element, index) => {
+                        const backColor =
+                           index % 2 === 0
+                              ? backgroundColor1
+                              : backgroundColor2;
+                        return (
+                           <AnalysisElementsComponent
+                              key={index}
+                              previousTahliller={previousTahliller}
+                              userdata={userdata}
+                              element={element}
+                           />
+                        );
+                     })}
+                  </View>
                </View>
-               <View style={styles.elementView}>
-                  {tahlil.perElement.map((element, index) => {
-                     const backColor =
-                        index % 2 === 0 ? backgroundColor1 : backgroundColor2;
-                     return (
-                        <AnalysisElementsComponent
-                           userdata={userdata}
-                           element={element}
-                        />
-                     );
-                  })}
-               </View>
-            </View>
-         </Animated.View>
-      </ScrollView>
+            </Animated.View>
+         </ScrollView>
+      )
    );
 };
-
+const eren = 2;
 export default PerAnalysisComponet;
 
 const styles = StyleSheet.create({

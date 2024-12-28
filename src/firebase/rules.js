@@ -1,0 +1,4 @@
+match /analysis_elements/{Id} {
+    allow read: if request.auth != null && ( get(/database/$(database)/documents/users/$(get(/databases/$(database)/documents/analysis/$(resource.data.analysis_id)).data.user_id)).data.email == request.auth.token.email || get(/databases/$(database)/documents/users_roles/$(request.auth.token.email)).data.role_id=="role2"||get(/databases/$(database)/documents/users_roles/$(request.auth.token.email)).data.role_id=="role3");
+    allow  write: if request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role_id == "role3"||  get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role_id == "role2" );
+  }

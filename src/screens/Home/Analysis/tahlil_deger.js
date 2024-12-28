@@ -8,11 +8,7 @@ const upIcon = "arrow-up-outline";
 const downIcon = "arrow-down-outline";
 const normalIcon = "remove-outline";
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const AnalysisElementsComponent = ({
-   previousTahliller,
-   userdata,
-   element,
-}) => {
+const TahlilDegerComponent = ({ previousTahliller, userdata, element }) => {
    const [loading, setLoading] = useState(true);
    const [guides, setGuides] = useState([]);
    const [iconName, setIconName] = useState("");
@@ -137,7 +133,7 @@ const AnalysisElementsComponent = ({
       </View>
    );
 };
-export default AnalysisElementsComponent;
+export default TahlilDegerComponent;
 
 const styles = StyleSheet.create({
    container: {

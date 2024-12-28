@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, TouchableOpacity, Dimensions } from "react-native";
+import { Button, TouchableOpacity, Dimensions, Settings } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GenelDrawerNavigator } from "mynavigations/drawerNavigator";
 import { GenelTabNavigator } from "mynavigations/tabNavigator";
@@ -9,7 +9,7 @@ import AnalysisScreen from "myscreens/Home/Analysis/index";
 import LoginScreen from "myscreens/Auth/Login/index";
 import RegisterScreen from "myscreens/Auth/Register/index";
 import ProfileScreen from "myscreens/Profile/Default/index";
-
+import SettingsScreen from "myscreens/Profile/Settings/index";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import NavBarTitle from "myshared/navbar_title";
@@ -53,6 +53,7 @@ const ProfileStackNavigator = () => {
          })}
       >
          <ProfileStack.Screen name="Profile" component={ProfileScreen} />
+         <ProfileStack.Screen name="Settings" component={SettingsScreen} />
       </ProfileStack.Navigator>
    );
 };
@@ -116,10 +117,10 @@ const HomeStackNavigator = () => {
             })}
          />
          <HomeStack.Screen
-            name="KlavuzSonucuScreen"
+            name="KlavuzSonucu"
             component={KlavuzSonucuScreen}
             options={() => ({
-               title: "KlavuzSonucuScreen",
+               title: "KlavuzSonucu",
             })}
          />
          <HomeStack.Screen
